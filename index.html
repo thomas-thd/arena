@@ -3,408 +3,173 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MONTE CARLO — ATTACK TREE : MITRE ATT&CK en Mode Échecs (Branches, Probabilités, Tout)</title>
+<title>MONTE CARLO — ARBRE VERTICAL : 1 COUP = 1 CHOIX</title>
 <style>
-:root{
-  --bg:#02050a;--surface:#040a14;--card:#0a1636;--border:#1a2e5c;
-  --text:#e8f4ff;--text-sub:#8aa8d0;--text-dim:#4a7090;--accent:#00ffaa;--accent2:#ff9500;--accent3:#8a2be2;--danger:#ff2a2a;
-  --font-body:'Inter',system-ui,sans-serif;--font-mono:'JetBrains Mono',monospace;--font-display:'Cormorant Garamond',serif;
-}
+:root{--bg:#03050a;--line:#0a1630;--accent:#00ffaa;--accent2:#ffaa00;--text:#e8f4ff;--text-sub:#8aa8d0;--font-body:'Inter',system-ui,sans-serif;--font-mono:'JetBrains Mono',monospace;--font-display:'Cormorant Garamond',serif;}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{font-family:var(--font-body);background:var(--bg);color:var(--text);line-height:1.7;overflow-x:hidden;min-height:100vh}
+body{font-family:var(--font-body);background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden;min-height:100vh}
 ::selection{background:rgba(0,255,170,.2);color:#fff}
 
-/* CHESS GRID BACKGROUND */
-.chess-bg{
-  position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.35;
-  background-image:
-    linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
-  background-size:60px 60px;
-}
+/* HERO SIMPLE */
+.hero{padding:6rem 2rem;text-align:center;background:linear-gradient(180deg,#02050a,#030814)}
+.hero h1{font-family:var(--font-display);font-size:clamp(2.5rem,8vw,5rem);font-weight:600;letter-spacing:-.04em;color:#fff;margin-bottom:.5rem}
+.hero .highlight{color:var(--accent);position:relative}
+.hero p{color:var(--text-sub);font-size:1.1rem;max-width:600px;margin:0 auto 2rem}
 
-/* NAV */
-nav{position:sticky;top:0;z-index:100;background:rgba(2,5,10,.92);backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.08);padding:.7rem 2rem;display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;justify-content:center}
-nav a{color:var(--text-sub);text-decoration:none;font-weight:800;font-size:.82rem;padding:.4rem .9rem;border-radius:8px;transition:.2s;border:1px solid transparent}
-nav a:hover,nav a.active{color:var(--accent);border-color:rgba(0,255,170,.25);background:rgba(0,255,170,.06)}
+/* ARBRE VERTICAL */
+.tree-v{max-width:700px;margin:0 auto;padding:3rem 1.5rem}
+.tree-v h2{font-family:var(--font-display);font-size:2rem;font-weight:600;text-align:center;margin-bottom:3rem;letter-spacing:-.02em}
 
-/* HERO */
-.hero{position:relative;min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;overflow:hidden;padding:6rem 2rem;text-align:center;z-index:1}
-.hero-inner{position:relative;z-index:2;max-width:1400px;animation:fadeUp .9s ease-out both}
-@keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
-.badge{display:inline-flex;align-items:center;gap:.5rem;padding:.5rem 1.2rem;border-radius:999px;background:rgba(0,255,170,.1);border:1.5px solid rgba(0,255,170,.3);color:var(--accent);font-size:.78rem;font-weight:900;letter-spacing:.12em;text-transform:uppercase;margin-bottom:2.5rem}
-.badge span{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--accent);animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
-h1{font-family:var(--font-display);font-size:clamp(3rem,9vw,7.5rem);line-height:1.05;letter-spacing:-.05em;font-weight:600;color:#fff;margin-bottom:1.2rem}
-h1 .highlight{color:var(--accent);position:relative}
-h1 .highlight::after{content:'';position:absolute;bottom:6%;left:-4%;width:108%;height:24%;background:rgba(0,255,170,.14);border-radius:4px;z-index:-1}
-.subtitle{font-size:1.2rem;color:var(--text-sub);max-width:700px;margin:0 auto 3rem;font-weight:300}
-.cta-row{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
-.btn{display:inline-flex;align-items:center;gap:.7rem;padding:1rem 2.2rem;border-radius:16px;text-decoration:none;font-weight:900;transition:.25s;border:none;cursor:pointer;font-size:1rem;box-shadow:0 10px 36px rgba(0,255,170,.3)}
-.btn-primary{background:linear-gradient(135deg,var(--accent),#00ffaa);color:#030814}
-.btn-primary:hover{transform:translateY(-3px);box-shadow:0 18px 50px rgba(0,255,170,.5)}
-.btn-secondary{background:rgba(255,255,255,.05);color:#fff;border:1px solid rgba(255,255,255,.15);backdrop-filter:blur(8px)}
-.btn-secondary:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.25)}
+.coup{border-left:3px solid var(--accent);margin-bottom:1.5rem;padding-left:1.5rem;position:relative;animation:fadeIn .6s ease-out both}
+.coup::before{content:'';position:absolute;left:-8px;top:0;width:13px;height:13px;background:var(--accent);border-radius:50%;box-shadow:0 0 0 4px rgba(0,255,170,.2)}
+.coup-num{font-family:var(--font-mono);font-size:.75rem;color:var(--accent);font-weight:800;letter-spacing:.1em;text-transform:uppercase;margin-bottom:.2rem}
+.coup h3{font-size:1.3rem;font-weight:700;margin-bottom:.2rem;color:#fff}
+.coup .famille{font-size:.9rem;color:var(--text-dim);margin-bottom:.6rem;font-weight:600;font-family:var(--font-mono)}
+.coup .un-coup{display:inline-block;padding:.35rem .9rem;background:rgba(0,255,170,.08);border:1px solid rgba(0,255,170,.25);border-radius:8px;color:var(--accent);font-weight:800;font-size:.85rem;cursor:pointer;transition:.2s}
+.coup .un-coup:hover{background:rgba(0,255,170,.18);border-color:rgba(0,255,170,.5);transform:translateY(-2px)}
 
-/* TREE VISUAL */
-.tree-container{position:relative;z-index:2;padding:4rem 1.5rem 6rem;max-width:1600px;margin:0 auto}
-.section-header{text-align:center;margin-bottom:4rem}
-.section-header h2{font-size:2.6rem;font-weight:900;letter-spacing:-.04em;margin-bottom:.7rem}
-.eyebrow{display:inline-block;color:var(--accent);font-weight:900;font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;margin-bottom:.8rem}
+/* DÉTAIL */
+.detail-box{display:none;margin-top:.8rem;padding:1rem 1.2rem;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:10px;animation:slide .3s ease-out}
+.detail-box h4{font-weight:800;color:var(--accent);font-size:1rem;margin-bottom:.5rem}
+.detail-box p{font-size:.9rem;color:var(--text-sub);line-height:1.6}
+.detail-box .prob{font-family:var(--font-mono);font-weight:700;color:var(--accent2);margin-top:.3rem;display:inline-block;background:rgba(255,170,0,.08);padding:.15rem .4rem;border-radius:6px;border:1px solid rgba(255,170,0,.2);font-size:.85rem}
 
-/* MONTE CARLO TREE NODE */
-.mctree{display:flex;flex-wrap:wrap;justify-content:center;gap:3rem 2.5rem;align-items:flex-start;perspective:1200px}
-.mctree-col{display:flex;flex-direction:column;gap:2rem;min-width:260px;max-width:340px}
-.mctree-node{
-  background:linear-gradient(160deg,var(--card),#08183a);border:2px solid var(--border);border-radius:var(--radius);padding:1.8rem;position:relative;transition:.3s ease;
-  box-shadow:0 14px 50px rgba(0,0,0,.6);cursor:pointer;transform-style:preserve-3d;transform:translateZ(0);
-}
-.mctree-node:hover{transform:translateY(-8px) translateZ(15px);border-color:rgba(0,255,170,.45);box-shadow:0 26px 60px rgba(0,255,170,.15)}
-.mctree-node .node-id{font-family:var(--font-mono);font-size:.75rem;color:var(--accent);font-weight:800;margin-bottom:.4rem;letter-spacing:.06em}
-.mctree-node h3{font-size:1.3rem;font-weight:900;margin-bottom:.3rem;color:#fff}
-.mctree-node .prob{display:inline-block;font-family:var(--font-mono);font-size:.85rem;color:var(--accent2);font-weight:800;padding:.15rem .5rem;background:rgba(255,149,0,.1);border-radius:6px;margin-bottom:1rem;border:1px solid rgba(255,149,0,.2)}
-.mctree-node .desc{font-size:.92rem;color:var(--text-sub);margin-bottom:1.2rem;line-height:1.6}
-.mctree-node .branches{display:flex;flex-wrap:wrap;gap:.35rem}
-.mctree-node .branch-tag{font-size:.72rem;padding:.2rem .55rem;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:var(--text-sub);font-weight:700;transition:.2s;cursor:pointer}
-.mctree-node .branch-tag:hover{background:rgba(0,255,170,.15);border-color:rgba(0,255,170,.3);color:var(--accent)}
-
-/* BRANCH LINES LIKE CHESS TREE */
-.branch-connector{
-  display:flex;align-items:center;justify-content:center;min-height:40px;flex-shrink:0;
-}
-.branch-connector .line-v{width:3px;height:60px;background:linear-gradient(180deg,var(--accent),transparent);border-radius:3px;opacity:.5}
-.branch-connector .line-h{width:40px;height:3px;background:linear-gradient(90deg,var(--accent),transparent);border-radius:3px;opacity:.5}
-
-/* EXPAND PANEL */
-.expand-panel{display:none;background:rgba(0,255,170,.04);border:1px solid rgba(0,255,170,.15);border-radius:16px;padding:1.5rem;margin-top:1rem;animation:fadeIn .3s ease-out}
-@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-.expand-panel h4{font-weight:800;color:var(--accent);margin-bottom:.5rem;font-size:1rem}
-.expand-panel ul{list-style:none;margin-left:.5rem}
-.expand-panel li{font-size:.88rem;color:var(--text-sub);margin-bottom:.4rem;padding-left:1rem;position:relative}
-.expand-panel li::before{content:'→';position:absolute;left:0;color:var(--accent2);font-weight:900}
-.expand-panel .prob-value{font-family:var(--font-mono);font-weight:700;color:var(--accent)}
-
-/* CHESS STRATEGY BOX */
-.chess-box{max-width:1000px;margin:3rem auto;padding:2.5rem;background:linear-gradient(160deg,#060f2a,#030814);border:2px solid rgba(255,255,255,.08);border-radius:24px;box-shadow:0 20px 60px rgba(0,0,0,.7);position:relative;overflow:hidden}
-.chess-box::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--accent),var(--accent2),var(--accent3),var(--accent));opacity:.9}
-.chess-box h3{font-family:var(--font-display);font-size:2rem;font-weight:600;margin-bottom:1rem;color:#fff}
-.chess-box p{font-size:1.05rem;color:var(--text-sub);line-height:1.65;margin-bottom:1.2rem}
-.chess-box .mc-stats{display:flex;gap:2rem;flex-wrap:wrap;margin-top:1.5rem}
-.chess-box .mc-stat{font-family:var(--font-mono);font-size:2.2rem;font-weight:900;color:var(--accent);line-height:1}
-.chess-box .mc-stat-label{font-size:.8rem;color:var(--text-dim);font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-top:.2rem}
+@keyframes fadeIn{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:translateX(0)}}
+@keyframes slide{from{opacity:0;height:0;padding:0 1.2rem}to{opacity:1;height:auto;padding:1rem 1.2rem}}
 
 /* FOOTER */
-footer{text-align:center;padding:5rem 1.5rem;color:var(--text-dim);font-size:.85rem;border-top:1px solid var(--border);margin-top:6rem;background:#02040a}
-
-/* RESPONSIVE */
-@media(max-width:1024px){.mctree{flex-direction:column;align-items:center}.mctree-col{width:100%;max-width:500px}}
+footer{text-align:center;padding:3rem 1.5rem;color:var(--text-dim);font-size:.85rem;border-top:1px solid rgba(255,255,255,.06);margin-top:4rem;background:#02040a}
 </style>
 </head>
 <body>
-<div class="chess-bg"></div>
 
-<nav aria-label="Navigation Monte Carlo">
-  <a href="#top">Accueil</a>
-  <a href="#mctree-section">Arbre d'Attaque</a>
-  <a href="#chess-strategy">Stratégie Échecs</a>
-  <a href="#branches-detail">Branches Détaillées</a>
-</nav>
-
-<header class="hero" id="top">
-  <div class="hero-inner">
-    <div class="badge"><span></span> MODE MONTE CARLO — ÉCHECS STRATÉGIQUES</div>
-    <h1>Arbre d'Attaque <span class="highlight">Comme aux Échecs</span></h1>
-    <p class="subtitle">Chaque tactique MITRE ATT&CK devient un nœud stratégique. De chaque nœud, plusieurs branches (techniques) débouchent avec des probabilités. Tout est interactif : clique, explore, simule.</p>
-    <div class="cta-row">
-      <a href="#mctree-section" class="btn btn-primary">Explorer l'Arbre</a>
-      <a href="#chess-strategy" class="btn btn-secondary">Stratégie Monte Carlo</a>
-    </div>
-  </div>
+<header class="hero">
+  <h1>MONTE CARLO <span class="highlight">VERTICAL</span></h1>
+  <p>1 coup = 1 choix. Chaque tactique MITRE a sa famille et 1 seul coup autorisé. Clique pour voir le détail.</p>
 </header>
 
-<main>
+<main class="tree-v" aria-label="Arbre vertical des coups MITRE">
+  <h2>COUP PAR COUP — 14 TOURS</h2>
 
-<section id="mctree-section" aria-label="Arbre d'attaque Monte Carlo">
-  <div class="section-header">
-    <div class="eyebrow">Monte Carlo Tree Search — Style Échecs</div>
-    <h2>L'Arbre des 14 Tactiques</h2>
-    <p>Chaque nœud = une tactique. Chaque branche = une technique avec sa probabilité de succès dans un scénario red team. Clique sur un nœud pour voir toutes ses branches et simuler le parcours.</p>
-  </div>
+  <article class="coup" style="animation-delay:.05s">
+    <div class="coup-num">TOUR 1 — FAMILLE RECONNAISSANCE</div>
+    <h3>TA0043 — Reconnaissance</h3>
+    <p class="famille">Famille : Scan / Recherche / Info</p>
+    <button class="un-coup" onclick="this.nextElementSibling.style.display='block';this.textContent='Voir le coup'">⚔️ T1595 — Scan Actif <span style="font-family:var(--font-mono);font-size:.75rem;color:var(--accent2);margin-left:.3rem;">1 COUP</span></button>
+    <div class="detail-box"><h4>Détail du coup unique</h4><p>Outils : Nmap, Masscan, Naabu, Shodan. Action : scanner ports et services. Probabilité de succès : <span class="prob">92%</span>. Si réussi : on passe au Tour 2.</p></div>
+  </article>
 
-  <div class="mctree" id="mctree-section">
+  <article class="coup" style="animation-delay:.1s">
+    <div class="coup-num">TOUR 2 — FAMILLE RESSOURCES</div>
+    <h3>TA0042 — Développement des Ressources</h3>
+    <p class="famille">Famille : Infrastructure / Capacité</p>
+    <button class="un-coup" onclick="this.nextElementSibling.style.display='block';this.textContent='Voir le coup'">⚔️ T1583 — Acquisition Infrastructure <span style="font-family:var(--font-mono);font-size:.75rem;color:var(--accent2);margin-left:.3rem;">1 COUP</span></button>
+    <div class="detail-box"><h4>Détail du coup unique</h4><p>Outils : Cobalt Strike, Covenant, Sliver. Action : acheter/louer serveurs et domaines. Probabilité : <span class="prob">85%</span>.</p></div>
+  </article>
 
-    <!-- COLONNE 1 : RECON + RESSOURCES -->
-    <div class="mctree-col">
-      <div class="mctree-node" onclick="expandNode(this)">
-        <div class="node-id">TA0043 — RECONNAISSANCE</div>
-        <h3>Reconnaissance <span style="font-size:.8rem;color:var(--text-dim);font-weight:400;">(Phase 1)</span></h3>
-        <div class="prob">Probabilité succès : 92%</div>
-        <div class="desc">Avant tout coup : observer, scanner, collecter. Comme au début d'une partie d'échecs : analyse de la position adverse.</div>
-        <div class="branches">
-          <span class="branch-tag" onclick="showBranch('T1595','Scan actif — Nmap, Masscan, Shodan — Découverte des ports et services ouverts. Probabilité : 88%')">T1595 Scan</span>
-          <span class="branch-tag" onclick="showBranch('T1593','Recherche ouverte — theHarvester, Amass — Informations publiques sur la cible. Probabilité : 85%')">T1593 Recherche</span>
-          <span class="branch-tag" onclick="showBranch('T1592','Infos victime — LinkedInt, GitRob — Profil des employés et technologies. Probabilité : 78%')">T1592 Victime</span>
-        </div>
-        <div class="expand-panel"><h4>Détail des branches</h4><ul id="node-TA0043"></ul></div>
-      </div>
+  <article class="coup" style="animation-delay:.15s">
+    <div class="coup-num">TOUR 3 — FAMILLE ACCÈS</div>
+    <h3>TA0001 — Accès Initial</h3>
+    <p class="famille">Famille : Phishing / Exploit / Compte</p>
+    <button class="un-coup" onclick="this.nextElementSibling.style.display='block';this.textContent='Voir le coup'">⚔️ T1566 — Phishing <span style="font-family:var(--font-mono);font-size:.75rem;color:var(--accent2);margin-left:.3rem;">1 COUP</span></button>
+    <div class="detail-box"><h4>Détail du coup unique</h4><p>Outils : GoPhish, Evilginx2. Action : envoyer message ciblé. Probabilité : <span class="prob">65%</span>.</p></div>
+  </article>
 
-      <div class="mctree-node" onclick="expandNode(this)">
-        <div class="node-id">TA0042 — RESSOURCES</div>
-        <h3>Développement des Ressources</h3>
-        <div class="prob">Probabilité succès : 85%</div>
-        <div class="desc">Préparer ses pièces : infrastructure, outils, payloads. Comme préparer son ouverture et ses pièces sur l'échiquier.</div>
-        <div class="branches">
-          <span class="branch-tag" onclick="showBranch('T1583','Infrastructure — Cobalt Strike, Covenant — Acquisition de serveurs et domaines. Probabilité : 82%')">T1583 Infra</span>
-          <span class="branch-tag" onclick="showBranch('T1588','Capacités — Mimikatz, BloodHound — Outils de post-exploitation. Probabilité : 79%')">T1588 Outils</span>
-          <span class="branch-tag" onclick="showBranch('T1584','Compromission — Chaîne d\'approvisionnement — Injection dans un fournisseur. Probabilité : 45%')">T1584 Fournisseur</span>
-        </div>
-        <div class="expand-panel"><h4>Détail des branches</h4><ul id="node-TA0042"></ul></div>
-      </div>
-    </div>
+  <article class="coup" style="animation-delay:.2s">
+    <div class="coup-num">TOUR 4 — FAMILLE EXÉCUTION</div>
+    <h3>TA0002 — Exécution</h3>
+    <p class="famille">Famille : Commande / Script / Macro</p>
+    <button class="un-coup" onclick="this.nextElementSibling.style.display='block';this.textContent='Voir le coup'">⚔️ T1059 — Interpréteur <span style="font-family:var(--font-mono);font-size:.75rem;color:var(--accent2);margin-left:.3rem;">1 COUP</span></button>
+    <div class="detail-box"><h4>Détail du coup unique</h4><p>Outils : PowerShell, Bash, Python. Action : exécuter code malveillant. Probabilité : <span class="prob">78%</span>.</p></div>
+  </article>
 
-    <!-- COLONNE 2 : ACCÈS + EXÉCUTION -->
-    <div class="mctree-col">
-      <div class="mctree-node" onclick="expandNode(this)">
-        <div class="node-id">TA0001 — ACCÈS INITIAL</div>
-        <h3>Accès Initial</h3>
-        <div class="prob">Probabilité succès : 65%</div>
-        <div class="desc">Le premier coup : pénétrer la défense. Comme briser la première ligne de l'adversaire aux échecs.</div>
-        <div class="branches">
-          <span class="branch-tag" onclick="showBranch('T1566','Phishing — GoPhish, Evilginx2 — Message ciblé avec payload. Probabilité : 62%')">T1566 Phishing</span>
-          <span class="branch-tag" onclick="showBranch('T1190','Exploitation publique — CVE connue — Exploitation d\'une application exposée. Probabilité : 48%')">T1190 Exploit</span>
-          <span class="branch-tag" onclick="showBranch('T1078','Comptes valides — CrackMapExec — Utilisation d\'identifiants volés. Probabilité : 55%')">T1078 Comptes</span>
-        </div>
-        <div class="expand-panel"><h4>Détail des branches</h4><ul id="node-TA0001"></ul></div>
-      </div>
+  <article class="coup" style="animation-delay:.25s">
+    <div class="coup-num">TOUR 5 — FAMILLE PERSISTANCE</div>
+    <h3>TA0003 — Persistance</h3>
+    <p class="famille">Famille : Tâche / Registre / Compte</p>
+    <button class="un-coup" onclick="this.nextElementSibling.style.display='block';this.textContent='Voir le coup'">⚔️ T1053 — Tâche Planifiée <span style="font-family:var(--font-mono);font-size:.75rem;color:var(--accent2);margin-left:.3rem;">1 COUP</span></button>
+    <div class="detail-box"><h4>Détail du coup unique</h4><p>Outils : schtasks, cron. Action : créer tâche récurrente. Probabilité : <span class="prob">72%</span>.</p></div>
+  </article>
 
-      <div class="mctree-node" onclick="expandNode(this)">
-        <div class="node-id">TA0002 — EXÉCUTION</div>
-        <h3>Exécution</h3>
-        <div class="prob">Probabilité succès : 78%</div>
-        <div class="desc">Le payload prend vie. Comme activer une pièce capturée. PowerShell, scripts, macros.</div>
-        <div class="branches">
-          <span class="branch-tag" onclick="showBranch('T1059','Interpréteur — PowerShell, Bash — Exécution de code malveillant. Probabilité : 80%')">T1059 Scripts</span>
-          <span class="branch-tag" onclick="showBranch('T1204','Exécution utilisateur — Document Office — Lancement volontaire. Probabilité : 70%')">T1204 Utilisateur</span>
-          <span class="branch-tag" onclick="showBranch('T1053','Tâche planifiée — Persistance immédiate — Code récurrent. Probabilité : 75%')">T1053 Tâche</span>
-        </div>
-        <div class="expand-panel"><h4>Détail des branches</h4><ul id="node-TA0002"></ul></div>
-      </div>
-    </div>
+  <article class="coup" style="animation-delay:.3s">
+    <div class="coup-num">TOUR 6 — FAMILLE ÉLÉVATION</div>
+    <h3>TA0004 — Élévation de Privilèges</h3>
+    <p class="famille">Famille : Injection / Token / UAC</p>
+    <button class="un-coup" onclick="this.nextElementSibling.style.display='block';this.textContent='Voir le coup'">⚔️ T1055 — Injection <span style="font-family:var(--font-mono);font-size:.75rem;color:var(--accent2);margin-left:.3rem;">1 COUP</span></button>
+    <div class="detail-box"><h4>Détail du coup unique</h4><p>Outils : Mimikatz, Process Hacker. Action : injecter dans processus admin. Probabilité : <span class="prob">58%</span>.</p></div>
+  </article>
 
-    <!-- COLONNE 3 : PERSISTANCE + ÉLÉVATION -->
-    <div class="mctree-col">
-      <div class="mctree-node" onclick="expandNode(this)">
-        <div class="node-id">TA0003 — PERSISTANCE</div>
-        <h3>Persistance</h3>
-        <div class="prob">Probabilité succès : 72%</div>
-        <div class="desc">Maintenir la position. Comme protéger une pièce avancée. Tâches, services, registre.</div>
-        <div class="branches">
-          <span class="branch-tag" onclick="showBranch('T1053','Tâche planifiée — Récurrence automatique — Code au démarrage. Probabilité : 74%')">T1053 Tâche</span>
-          <span class="branch-tag" onclick="showBranch('T1547','Autostart — Registre Windows — Exécution au boot. Probabilité : 68%')">T1547 Registre</span>
-          <span class="branch-tag" onclick="showBranch('T1136','Nouveau compte — Compte administrateur caché. Probabilité : 60%')">T1136 Compte</span>
-        </div>
-        <div class="expand-panel"><h4>Détail des branches</h4><ul id="node-TA0003"></ul></div>
-      </div>
+  <article class="coup" style="animation-delay:.35s">
+    <div class="coup-num">TOUR 7 — FAMILLE ÉVASION</div>
+    <h3>TA0005 — Évasion de Défense</h3>
+    <p class="famille">Famille : Désactivation / Obfuscation / Suppression</p>
+    <button class="un-coup" onclick="this.nextElementSibling.style.display='block';this.textContent='Voir le coup'">⚔️ T1562 — Altération Défenses <span style="font-family:var(--font-mono);font-size:.75rem;color:var(--accent2);margin-left:.3rem;">1 COUP</span></button>
+    <div class="detail-box"><h4>Détail du coup unique</h4><p>Action : désactiver antivirus/EDR. Probabilité : <span class="prob">68%</span>.</p></div>
+  </article>
 
-      <div class="mctree-node" onclick="expandNode(this)">
-        <div class="node-id">TA0004 — ÉLÉVATION</div>
-        <h3>Élévation de Privilèges</h3>
-        <div class="prob">Probabilité succès : 58%</div>
-        <div class="desc">Monter en grade : de pion à reine. Injection, tokens, contournement UAC.</div>
-        <div class="branches">
-          <span class="branch-tag" onclick="showBranch('T1055','Injection — Processus système — Code dans un processus admin. Probabilité : 55%')">T1055 Injection</span>
-          <span class="branch-tag" onclick="showBranch('T1548','UAC Bypass — Contournement — Élévation sans alerte. Probabilité : 52%')">T1548 UAC</span>
-          <span class="branch-tag" onclick="showBranch('T1134','Token — Vol de token — Utilisation d\'un token admin. Probabilité : 50%')">T1134 Token</span>
-        </div>
-        <div class="expand-panel"><h4>Détail des branches</h4><ul id="node-TA0004"></ul></div>
-      </div>
-    </div>
+  <article class="coup" style="animation-delay:.4s">
+    <div class="coup-num">TOUR 8 — FAMILLE CRÉDENTIELS</div>
+    <h3>TA0006 — Accès aux Crédentiels</h3>
+    <p class="famille">Famille : Dumping / Brute Force / Magasin</p>
+    <button class="un-coup" onclick="this.nextElementSibling.style.display='block';this.textContent='Voir le coup'">⚔️ T1003 — Dumping LSASS <span style="font-family:var(--font-mono);font-size:.75rem;color:var(--accent2);margin-left:.3rem;">1 COUP</span></button>
+    <div class="detail-box"><h4>Détail du coup unique</h4><p>Outils : Mimikatz. Action : extraire mots de passe mémoire. Probabilité : <span class="prob">70%</span>.</p></div>
+  </article>
 
-    <!-- COLONNE 4 : ÉVASION + CRÉDENTIELS -->
-    <div class="mctree-col">
-      <div class="mctree-node" onclick="expandNode(this)">
-        <div class="node-id">TA0005 — ÉVASION</div>
-        <h3>Évasion de Défense</h3>
-        <div class="prob">Probabilité succès : 68%</div>
-        <div class="desc">Se cacher en plein jour. Désactivation d'outils, obfuscation, suppression de traces.</div>
-        <div class="branches">
-          <span class="branch-tag" onclick="showBranch('T1562','Altération — Désactivation EDR — Outil de sécurité arrêté. Probabilité : 60%')">T1562 Défense</span>
-          <span class="branch-tag" onclick="showBranch('T1027','Obfuscation — Fichier caché — Compression, chiffrement. Probabilité : 72%')">T1027 Caché</span>
-          <span class="branch-tag" onclick="showBranch('T1070','Suppression — Journaux effacés — Traces supprimées. Probabilité : 65%')">T1070 Traces</span>
-        </div>
-        <div class="expand-panel"><h4>Détail des branches</h4><ul id="node-TA0005"></ul></div>
-      </div>
+  <article class="coup" style="animation-delay:.45s">
+    <div class="coup-num">TOUR 9 — FAMILLE DÉCOUVERTE</div>
+    <h3>TA0007 — Découverte</h3>
+    <p class="famille">Famille : Fichiers / Systèmes / Services</p>
+    <button class="un-coup" onclick="this.nextElementSibling.style.display='block';this.textContent='Voir le coup'">⚔️ T1083 — Découverte Fichiers <span style="font-family:var(--font-mono);font-size:.75rem;color:var(--accent2);margin-left:.3rem;">1 COUP</span></button>
+    <div class="detail-box"><h4>Détail du coup unique</h4><p>Action : rechercher données sensibles. Probabilité : <span class="prob">82%</span>.</p></div>
+  </article>
 
-      <div class="mctree-node" onclick="expandNode(this)">
-        <div class="node-id">TA0006 — CRÉDENTIELS</div>
-        <h3>Accès aux Crédentiels</h3>
-        <div class="prob">Probabilité succès : 70%</div>
-        <div class="desc">Voler les clés du royaume. LSASS, brute-force, magasins de mots de passe.</div>
-        <div class="branches">
-          <span class="branch-tag" onclick="showBranch('T1003','Dumping LSASS — Mimikatz — Extraction mémoire. Probabilité : 75%')">T1003 LSASS</span>
-          <span class="branch-tag" onclick="showBranch('T1110','Brute Force — Essai répété — Mots de passe devinés. Probabilité : 45%')">T1110 Force</span>
-          <span class="branch-tag" onclick="showBranch('T1555','Magasins — Navigateurs — Clés de mot de passe extraites. Probabilité : 65%')">T1555 Magasins</span>
-        </div>
-        <div class="expand-panel"><h4>Détail des branches</h4><ul id="node-TA0006"></ul></div>
-      </div>
-    </div>
+  <article class="coup" style="animation-delay:.5s">
+    <div class="coup-num">TOUR 10 — FAMILLE LATÉRAL</div>
+    <h3>TA0008 — Mouvement Latéral</h3>
+    <p class="famille">Famille : Services / Hash / Externe</p>
+    <button class="un-coup" onclick="this.nextElementSibling.style.display='block';this.textContent='Voir le coup'">⚔️ T1021 — Services Distants <span style="font-family:var(--font-mono);font-size:.75rem;color:var(--accent2);margin-left:.3rem;">1 COUP</span></button>
+    <div class="detail-box"><h4>Détail du coup unique</h4><p>Outils : RDP, SMB, SSH. Action : se déplacer vers autre système. Probabilité : <span class="prob">60%</span>.</p></div>
+  </article>
 
-    <!-- COLONNE 5 : DÉCOUVERTE + LATÉRAL -->
-    <div class="mctree-col">
-      <div class="mctree-node" onclick="expandNode(this)">
-        <div class="node-id">TA0007 — DÉCOUVERTE</div>
-        <h3>Découverte</h3>
-        <div class="prob">Probabilité succès : 82%</div>
-        <div class="desc">Explorer le terrain. Systèmes, comptes, services, partages.</div>
-        <div class="branches">
-          <span class="branch-tag" onclick="showBranch('T1083','Fichiers — Recherche données — Données sensibles trouvées. Probabilité : 85%')">T1083 Fichiers</span>
-          <span class="branch-tag" onclick="showBranch('T1018','Systèmes — Scan réseau — Machines accessibles identifiées. Probabilité : 80%')">T1018 Systèmes</span>
-          <span class="branch-tag" onclick="showBranch('T1046','Services — Ports ouverts — Services exposés cartographiés. Probabilité : 78%')">T1046 Services</span>
-        </div>
-        <div class="expand-panel"><h4>Détail des branches</h4><ul id="node-TA0007"></ul></div>
-      </div>
+  <article class="coup" style="animation-delay:.55s">
+    <div class="coup-num">TOUR 11 — FAMILLE COLLECTE</div>
+    <h3>TA0009 — Collecte</h3>
+    <p class="famille">Famille : Local / Écran / Audio</p>
+    <button class="un-coup" onclick="this.nextElementSibling.style.display='block';this.textContent='Voir le coup'">⚔️ T1005 — Données Locales <span style="font-family:var(--font-mono);font-size:.75rem;color:var(--accent2);margin-left:.3rem;">1 COUP</span></button>
+    <div class="detail-box"><h4>Détail du coup unique</h4><p>Action : copier fichiers sensibles. Probabilité : <span class="prob">75%</span>.</p></div>
+  </article>
 
-      <div class="mctree-node" onclick="expandNode(this)">
-        <div class="node-id">TA0008 — MOUVEMENT LATÉRAL</div>
-        <h3>Mouvement Latéral</h3>
-        <div class="prob">Probabilité succès : 60%</div>
-        <div class="desc">Se déplacer sur l'échiquier. RDP, SMB, SSH, passage du hash.</div>
-        <div class="branches">
-          <span class="branch-tag" onclick="showBranch('T1021','Services — RDP/SMB — Connexion à d\'autres systèmes. Probabilité : 58%')">T1021 Services</span>
-          <span class="branch-tag" onclick="showBranch('T1550','Matériel alt. — Pass the Hash — Identifiants alternatifs. Probabilité : 55%')">T1550 Hash</span>
-          <span class="branch-tag" onclick="showBranch('T1133','Externe — VPN/Accès — Services administratifs exposés. Probabilité : 40%')">T1133 Externe</span>
-        </div>
-        <div class="expand-panel"><h4>Détail des branches</h4><ul id="node-TA0008"></ul></div>
-      </div>
-    </div>
+  <article class="coup" style="animation-delay:.6s">
+    <div class="coup-num">TOUR 12 — FAMILLE C2</div>
+    <h3>TA0011 — Commandement & Contrôle</h3>
+    <p class="famille">Famille : Applicatif / Tunnel / Standard</p>
+    <button class="un-coup" onclick="this.nextElementSibling.style.display='block';this.textContent='Voir le coup'">⚔️ T1071 — Protocole Applicatif <span style="font-family:var(--font-mono);font-size:.75rem;color:var(--accent2);margin-left:.3rem;">1 COUP</span></button>
+    <div class="detail-box"><h4>Détail du coup unique</h4><p>Outils : HTTP, HTTPS, DNS. Action : établir canal de contrôle. Probabilité : <span class="prob">70%</span>.</p></div>
+  </article>
 
-    <!-- COLONNE 6 : COLLECTE + C2 -->
-    <div class="mctree-col">
-      <div class="mctree-node" onclick="expandNode(this)">
-        <div class="node-id">TA0009 — COLLECTE</div>
-        <h3>Collecte</h3>
-        <div class="prob">Probabilité succès : 75%</div>
-        <div class="desc">Ramasser le butin. Fichiers, captures d'écran, audio.</div>
-        <div class="branches">
-          <span class="branch-tag" onclick="showBranch('T1005','Données locales — Fichiers sensibles — Données copiées. Probabilité : 78%')">T1005 Local</span>
-          <span class="branch-tag" onclick="showBranch('T1113','Capture écran — Enregistrement visuel — Activité enregistrée. Probabilité : 70%')">T1113 Écran</span>
-          <span class="branch-tag" onclick="showBranch('T1123','Audio — Microphone — Conversations captées. Probabilité : 45%')">T1123 Audio</span>
-        </div>
-        <div class="expand-panel"><h4>Détail des branches</h4><ul id="node-TA0009"></ul></div>
-      </div>
+  <article class="coup" style="animation-delay:.65s">
+    <div class="coup-num">TOUR 13 — FAMILLE EXFILTRATION</div>
+    <h3>TA0010 — Exfiltration</h3>
+    <p class="famille">Famille : Canal C2 / Service Web / Autre</p>
+    <button class="un-coup" onclick="this.nextElementSibling.style.display='block';this.textContent='Voir le coup'">⚔️ T1041 — Exfil C2 <span style="font-family:var(--font-mono);font-size:.75rem;color:var(--accent2);margin-left:.3rem;">1 COUP</span></button>
+    <div class="detail-box"><h4>Détail du coup unique</h4><p>Action : transférer données volées. Probabilité : <span class="prob">55%</span>.</p></div>
+  </article>
 
-      <div class="mctree-node" onclick="expandNode(this)">
-        <div class="node-id">TA0011 — C2</div>
-        <h3>Commandement & Contrôle</h3>
-        <div class="prob">Probabilité succès : 70%</div>
-        <div class="desc">Maintenir le contrôle à distance. Comme diriger ses pièces depuis un poste central.</div>
-        <div class="branches">
-          <span class="branch-tag" onclick="showBranch('T1071','Applicatif — HTTP/HTTPS — Communication masquée dans le trafic web. Probabilité : 72%')">T1071 HTTP</span>
-          <span class="branch-tag" onclick="showBranch('T1090','Chiffré — Tunnel SSH — Canal sécurisé caché. Probabilité : 65%')">T1090 Tunnel</span>
-          <span class="branch-tag" onclick="showBranch('T1572','Standard — DNS/ICMP — Trafic légitime détourné. Probabilité : 68%')">T1572 Standard</span>
-        </div>
-        <div class="expand-panel"><h4>Détail des branches</h4><ul id="node-TA0011"></ul></div>
-      </div>
-    </div>
-
-    <!-- COLONNE 7 : EXFILTRATION + IMPACT -->
-    <div class="mctree-col">
-      <div class="mctree-node" onclick="expandNode(this)">
-        <div class="node-id">TA0010 — EXFILTRATION</div>
-        <h3>Exfiltration</h3>
-        <div class="prob">Probabilité succès : 55%</div>
-        <div class="desc">Sortir le butin du territoire ennemi. Web, C2, supports alternatifs.</div>
-        <div class="branches">
-          <span class="branch-tag" onclick="showBranch('T1041','Canal C2 — Même tunnel — Données via le canal existant. Probabilité : 58%')">T1041 C2</span>
-          <span class="branch-tag" onclick="showBranch('T1567','Service web — Dropbox/Drive — Services légitimes utilisés. Probabilité : 52%')">T1567 Web</span>
-          <span class="branch-tag" onclick="showBranch('T1048','Autre réseau — Bluetooth/WiFi — Protocoles alternatifs. Probabilité : 30%')">T1048 Alt</span>
-        </div>
-        <div class="expand-panel"><h4>Détail des branches</h4><ul id="node-TA0010"></ul></div>
-      </div>
-
-      <div class="mctree-node" onclick="expandNode(this)">
-        <div class="node-id">TA0040 — IMPACT</div>
-        <h3>Impact</h3>
-        <div class="prob">Probabilité succès : 40%</div>
-        <div class="desc">Le coup final : destruction, perturbation, chantage. Ransomware, suppression, arrêt.</div>
-        <div class="branches">
-          <span class="branch-tag" onclick="showBranch('T1486','Chiffrement — Ransomware — Données chiffrées pour extorsion. Probabilité : 42%')">T1486 Ransom</span>
-          <span class="branch-tag" onclick="showBranch('T1489','Arrêt service — Interruption — Opérations critiques arrêtées. Probabilité : 35%')">T1489 Service</span>
-          <span class="branch-tag" onclick="showBranch('T1529','Arrêt système — Redémarrage forcé — Machines éteintes. Probabilité : 30%')">T1529 Arrêt</span>
-        </div>
-        <div class="expand-panel"><h4>Détail des branches</h4><ul id="node-TA0040"></ul></div>
-      </div>
-    </div>
-
-  </div>
-</section>
-
-<!-- CHESS STRATEGY -->
-<section id="chess-strategy" aria-label="Stratégie Monte Carlo et Échecs">
-  <div class="section-header">
-    <div class="eyebrow">Stratégie</div>
-    <h2>Monte Carlo : Comme Jouer aux Échecs</h2>
-    <p>Chaque coup (tactique) ouvre plusieurs possibilités (techniques). Le red team évalue chaque branche, choisit le chemin avec le meilleur rapport succès/risque. C'est la stratégie du Monte Carlo Tree Search : explorer, évaluer, exploiter.</p>
-  </div>
-
-  <div class="chess-box">
-    <h3>Le Principe du Monte Carlo Tree Search (MCTS)</h3>
-    <p><strong>1. Sélection</strong> — Choisir un nœud (tactique) dans l'arbre selon une politique (probabilité de succès, difficulté, temps).</p>
-    <p><strong>2. Expansion</strong> — Depuis ce nœud, ajouter de nouvelles branches (techniques) qui n'ont pas encore été explorées.</p>
-    <p><strong>3. Simulation</strong> — Jouer aléatoirement depuis cette branche jusqu'à la fin du jeu (impact final) et observer le résultat (succès ou détecté).</p>
-    <p><strong>4. Rétropropagation</strong> — Remonter le résultat dans l'arbre : chaque nœud parent reçoit la moyenne des résultats de ses enfants.</p>
-    <div class="mc-stats">
-      <div><div class="mc-stat">14</div><div class="mc-stat-label">Tactiques (Nœuds)</div></div>
-      <div><div class="mc-stat">250+</div><div class="mc-stat-label">Techniques (Branches)</div></div>
-      <div><div class="mc-stat">700+</div><div class="mc-stat-label">Sous-techniques (Sous-branches)</div></div>
-      <div><div class="mc-stat">∞</div><div class="mc-stat-label">Chemins d'attaque (Combinaisons)</div></div>
-    </div>
-  </div>
-</section>
-
-<!-- BRANCHES DETAIL -->
-<section id="branches-detail" aria-label="Branches détaillées interactives">
-  <div class="section-header">
-    <div class="eyebrow">Exploration Interactif</div>
-    <h2>Cliquez pour Développer</h2>
-    <p>Toutes les branches de l'arbre sont cliquables. Cliquez sur un nœud ci-dessus pour faire apparaître le détail de ses branches. C'est le principe des échecs : chaque coup ouvre un nouvel arbre de possibilités.</p>
-  </div>
-</section>
+  <article class="coup" style="animation-delay:.7s">
+    <div class="coup-num">TOUR 14 — FAMILLE IMPACT</div>
+    <h3>TA0040 — Impact (FIN DU JEU)</h3>
+    <p class="famille">Famille : Chiffrement / Arrêt / Système</p>
+    <button class="un-coup" onclick="this.nextElementSibling.style.display='block';this.textContent='Voir le coup'">⚔️ T1486 — Chiffrement Impact <span style="font-family:var(--font-mono);font-size:.75rem;color:var(--accent2);margin-left:.3rem;">1 COUP</span></button>
+    <div class="detail-box"><h4>Détail du coup unique — FIN</h4><p>Outils : Ransomware. Action : chiffrer données (checkmate). Probabilité : <span class="prob">40%</span>. Partie terminée.</p></div>
+  </article>
 
 </main>
 
 <footer>
-  <p><strong>MONTE CARLO — MITRE ATT&CK</strong> — Mode Échecs : Branches, Probabilités, Tout Débouche.</p>
-  <p>Chaque tactique est un nœud. Chaque technique est une branche. Tout est interactif et explorable.</p>
-  <p>Source MITRE — Utiliser dans un cadre légal uniquement.</p>
+  <p><strong>MONTE CARLO — ARBRE VERTICAL — 14 COUPS</strong></p>
+  <p>Chaque tactique = 1 coup fixe. Clique = détail. Rien d'autre.</p>
 </footer>
 
-<script>
-function expandNode(node){
-  const panel = node.querySelector('.expand-panel');
-  panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
-  const id = node.querySelector('.node-id').textContent.split('—')[0].trim();
-  const ul = node.querySelector('.expand-panel ul');
-  if(ul.children.length === 0 && panel.style.display === 'block'){
-    // Populate with simulated branch details
-    const tags = Array.from(node.querySelectorAll('.branch-tag'));
-    tags.forEach(tag => {
-      const li = document.createElement('li');
-      li.innerHTML = `<strong>${tag.textContent.split('—')[0].trim()}</strong> — ${tag.textContent.split('—')[1] ? tag.textContent.split('—')[1].trim() : 'Technique MITRE ATT&CK'}`;
-      ul.appendChild(li);
-    });
-  }
-}
-function showBranch(code, desc){
-  const ul = document.getElementById('node-' + code.split('.')[0] || document.getElementById('node-TA0001'));
-  if(ul){
-    const li = document.createElement('li');
-    li.innerHTML = `<span class="prob-value">${code}</span> — ${desc.split('Probabilité : ')[0]} <br><span style="color:var(--accent);font-weight:700;">Probabilité : ${desc.split('Probabilité : ')[1] || 'Inconnue'}</span>`;
-    ul.appendChild(li);
-    ul.closest('.expand-panel').style.display = 'block';
-  }
-}
-</script>
 </body>
 </html>
