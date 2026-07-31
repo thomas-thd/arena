@@ -3,20 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Carte Éducative MITRE ATT&CK — Guide Complet</title>
+  <title>MITRE ATT&CK — Carte Éducative Complète et Interactive</title>
+  <meta name="description" content="Guide interactif et éducatif du framework MITRE ATT&CK : 14 tactiques, techniques, sous-techniques, explications, exemples réels et conseils de défense.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&family=JetBrains+Mono:wght@400;700&family=Cormorant+Garamond:ital,wght@1,600&display=swap" rel="stylesheet">
   <style>
     :root{
-      --bg:#060a14;
-      --surface:#0b1120;
-      --card:#0f1a30;
-      --card-hover:#152540;
-      --border:#1a2e4d;
+      --bg:#040a14;
+      --surface:#08112a;
+      --card:#0c1630;
+      --card-hover:#13254a;
+      --border:#1b2f5c;
       --text:#e8f0ff;
-      --text-sub:#82a0c7;
-      --text-dim:#55719a;
+      --text-sub:#92a8d0;
+      --text-dim:#54739e;
       --accent:#00d4aa;
       --accent2:#f59e0b;
       --accent3:#6366f1;
@@ -26,133 +27,149 @@
       --font-body:'Inter',system-ui,sans-serif;
       --font-mono:'JetBrains Mono',monospace;
       --font-display:'Cormorant Garamond',serif;
-      --radius:18px;
-      --shadow:0 10px 40px rgba(0,0,0,.55);
+      --radius:20px;
+      --shadow:0 14px 50px rgba(0,0,0,.65);
     }
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     html{scroll-behavior:smooth}
-    body{
-      font-family:var(--font-body);background:var(--bg);color:var(--text);line-height:1.65;
-      overflow-x:hidden;min-height:100vh;
-    }
+    body{font-family:var(--font-body);background:var(--bg);color:var(--text);line-height:1.7;overflow-x:hidden;min-height:100vh}
     ::selection{background:rgba(0,212,170,.22);color:#fff}
+    img{max-width:100%;display:block}
 
-    /* Hero */
+    /* Hero amélioré */
     .hero{
-      position:relative;min-height:92vh;display:flex;flex-direction:column;justify-content:center;align-items:center;
-      overflow:hidden;padding:4rem 2rem;text-align:center;
+      position:relative;min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;
+      overflow:hidden;padding:5rem 2rem;text-align:center;
       background:
-        radial-gradient(1200px 1200px at 15% 20%, rgba(99,102,241,.12) 0%, transparent 55%),
-        radial-gradient(900px 900px at 85% 75%, rgba(245,158,11,.10) 0%, transparent 55%),
-        radial-gradient(1100px 1100px at 50% 50%, rgba(0,212,170,.06) 0%, transparent 70%),
-        linear-gradient(180deg,#060a14 0%,#0b1120 100%);
+        radial-gradient(1400px 900px at 10% 10%, rgba(99,102,241,.14) 0%, transparent 55%),
+        radial-gradient(1100px 800px at 90% 85%, rgba(245,158,11,.10) 0%, transparent 55%),
+        radial-gradient(1200px 1000px at 50% 40%, rgba(0,212,170,.07) 0%, transparent 60%),
+        linear-gradient(180deg,#030814 0%,#060c1a 100%);
     }
     .hero::before{
       content:'';position:absolute;inset:0;pointer-events:none;z-index:0;
       background-image:
-        linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
-      background-size:60px 60px;
+        linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+      background-size:50px 50px;
     }
-    .hero-inner{position:relative;z-index:1;max-width:1100px;animation:fadeUp .9s ease-out both}
-    @keyframes fadeUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+    .hero-inner{position:relative;z-index:1;max-width:1200px;animation:fadeUp .9s ease-out both}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
     .badge{
-      display:inline-flex;align-items:center;gap:.5rem;padding:.45rem 1rem;border-radius:999px;
-      background:rgba(0,212,170,.10);border:1px solid rgba(0,212,170,.2);color:var(--accent);font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:1.8rem;
+      display:inline-flex;align-items:center;gap:.5rem;padding:.5rem 1.1rem;border-radius:999px;
+      background:rgba(0,212,170,.10);border:1px solid rgba(0,212,170,.2);color:var(--accent);font-size:.8rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;margin-bottom:2rem;
     }
-    .badge span{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--accent);animation:pulse 2.2s infinite}
-    @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(.85)}}
-    h1{font-family:var(--font-display);font-size:clamp(2.8rem,7vw,5.5rem);line-height:1.05;letter-spacing:-.03em;font-weight:600;color:#fff;margin-bottom:1rem}
+    .badge span{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--accent);animation:pulse 2.2s infinite}
+    @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
+    h1{font-family:var(--font-display);font-size:clamp(3rem,8vw,6.5rem);line-height:1.05;letter-spacing:-.04em;font-weight:600;color:#fff;margin-bottom:1.2rem}
     h1 .highlight{color:var(--accent);position:relative}
-    h1 .highlight::after{content:'';position:absolute;bottom:6%;left:-4%;width:108%;height:22%;background:rgba(0,212,170,.15);border-radius:4px;z-index:-1}
-    .subtitle{font-size:1.2rem;color:var(--text-sub);max-width:640px;margin:0 auto 2.8rem}
-    .cta-row{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
-    a.btn{
-      display:inline-flex;align-items:center;gap:.6rem;padding:.9rem 1.8rem;border-radius:12px;text-decoration:none;font-weight:700;transition:.2s ease;border:none;cursor:pointer;font-size:.95rem;
-    }
-    .btn-primary{background:linear-gradient(135deg,var(--accent),#00eebb);color:#030a16;box-shadow:0 8px 28px rgba(0,212,170,.35)}
-    .btn-primary:hover{transform:translateY(-2px);box-shadow:0 14px 36px rgba(0,212,170,.45)}
-    .btn-secondary{background:rgba(255,255,255,.05);color:#fff;border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(6px)}
+    h1 .highlight::after{content:'';position:absolute;bottom:8%;left:-4%;width:108%;height:24%;background:rgba(0,212,170,.14);border-radius:4px;z-index:-1}
+    .subtitle{font-size:1.3rem;color:var(--text-sub);max-width:680px;margin:0 auto 3.2rem}
+    .cta-row{display:flex;gap:1.2rem;justify-content:center;flex-wrap:wrap}
+    a.btn{display:inline-flex;align-items:center;gap:.7rem;padding:1rem 2rem;border-radius:14px;text-decoration:none;font-weight:800;transition:.2s ease;border:none;cursor:pointer;font-size:1rem}
+    .btn-primary{background:linear-gradient(135deg,var(--accent),#00eebb);color:#030a16;box-shadow:0 10px 32px rgba(0,212,170,.4)}
+    .btn-primary:hover{transform:translateY(-3px);box-shadow:0 16px 40px rgba(0,212,170,.5)}
+    .btn-secondary{background:rgba(255,255,255,.05);color:#fff;border:1px solid rgba(255,255,255,.15);backdrop-filter:blur(8px)}
     .btn-secondary:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.25)}
+    .hero-visual{margin-top:4rem;position:relative;z-index:1}
+    .hero-visual img{border-radius:16px;box-shadow:0 30px 80px rgba(0,0,0,.7);border:1px solid rgba(255,255,255,.08);max-width:900px;margin:0 auto}
 
     /* Sections */
-    section{max-width:1200px;margin:0 auto;padding:5rem 1.5rem;position:relative;z-index:2}
-    .section-header{text-align:center;margin-bottom:3.5rem}
-    .section-header h2{font-size:2.2rem;font-weight:800;letter-spacing:-.02em;margin-bottom:.6rem}
-    .section-header p{color:var(--text-sub);max-width:640px;margin:0 auto}
-    .eyebrow{display:inline-block;color:var(--accent);font-weight:800;font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;margin-bottom:.6rem}
+    section{max-width:1200px;margin:0 auto;padding:6rem 1.5rem;position:relative;z-index:2}
+    .section-header{text-align:center;margin-bottom:4rem}
+    .section-header h2{font-size:2.6rem;font-weight:800;letter-spacing:-.03em;margin-bottom:.7rem}
+    .section-header p{color:var(--text-sub);max-width:660px;margin:0 auto;font-size:1.05rem}
+    .eyebrow{display:inline-block;color:var(--accent);font-weight:800;font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;margin-bottom:.7rem}
 
-    /* Tactic cards grid */
-    .tactics{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.25rem;perspective:1200px}
+    /* Stats */
+    .stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1.2rem;margin:3.5rem 0 1.5rem}
+    .stat-box{background:linear-gradient(160deg,var(--card),#091538);border:1px solid var(--border);border-radius:18px;padding:1.6rem;text-align:center;box-shadow:var(--shadow);transition:.2s}
+    .stat-box:hover{transform:translateY(-4px);border-color:rgba(255,255,255,.15)}
+    .stat-box .value{font-family:var(--font-mono);font-size:2.4rem;font-weight:900;color:var(--accent);line-height:1;letter-spacing:-.03em}
+    .stat-box .label{font-size:.85rem;color:var(--text-dim);margin-top:.4rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+
+    /* Tactic cards */
+    .tactics{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.3rem;perspective:1400px}
     .tactic-card{
-      background:linear-gradient(160deg,var(--card) 0%,#0c1630 100%);border:1px solid var(--border);border-radius:var(--radius);padding:1.8rem;transition:.25s ease;position:relative;overflow:hidden;
-      box-shadow:var(--shadow);transform-style:preserve-3d;transform:translateZ(0);
+      background:linear-gradient(165deg,var(--card) 0%,#0b1838 100%);border:1px solid var(--border);border-radius:var(--radius);padding:2rem;transition:.25s ease;position:relative;overflow:hidden;
+      box-shadow:var(--shadow);transform-style:preserve-3d;transform:translateZ(0);cursor:pointer;
     }
-    .tactic-card:hover{transform:translateY(-5px) translateZ(10px);border-color:rgba(255,255,255,.12);box-shadow:0 22px 50px rgba(0,0,0,.7)}
+    .tactic-card:hover{transform:translateY(-6px) translateZ(12px);border-color:rgba(255,255,255,.15);box-shadow:0 26px 60px rgba(0,0,0,.8)}
     .tactic-card::before{
-      content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--accent),var(--accent2));opacity:.85;border-radius:4px 4px 0 0;
+      content:'';position:absolute;top:0;left:0;right:0;height:5px;background:linear-gradient(90deg,var(--accent),var(--accent2),var(--accent3),var(--accent));opacity:.9;border-radius:5px 5px 0 0;
     }
-    .tactic-id{font-family:var(--font-mono);font-size:.8rem;color:var(--text-dim);font-weight:700;margin-bottom:.3rem;letter-spacing:.04em}
-    .tactic-card h3{font-size:1.15rem;font-weight:800;margin-bottom:.35rem;letter-spacing:-.01em}
-    .tactic-card .desc{font-size:.92rem;color:var(--text-sub);margin-bottom:1rem}
-    .tags{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.8rem}
-    .tag{font-size:.72rem;padding:.2rem .55rem;border-radius:999px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);color:var(--text-sub);font-weight:600}
+    .tactic-id{font-family:var(--font-mono);font-size:.8rem;color:var(--text-dim);font-weight:700;margin-bottom:.35rem;letter-spacing:.06em}
+    .tactic-card h3{font-size:1.25rem;font-weight:800;margin-bottom:.45rem;letter-spacing:-.02em}
+    .tactic-card .desc{font-size:.95rem;color:var(--text-sub);margin-bottom:1.2rem;line-height:1.6}
+    .tags{display:flex;flex-wrap:wrap;gap:.35rem}
+    .tag{font-size:.75rem;padding:.25rem .6rem;border-radius:999px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);color:var(--text-sub);font-weight:700;letter-spacing:.01em}
     .tag.accent{background:rgba(0,212,170,.12);border-color:rgba(0,212,170,.25);color:var(--accent)}
+
+    /* Flow */
+    .flow-strip{position:relative;padding:3rem 1rem 2.5rem;overflow:hidden}
+    .flow-strip .track{display:flex;gap:.4rem;align-items:center;justify-content:center;flex-wrap:wrap;position:relative;z-index:1}
+    .flow-strip .step{
+      background:linear-gradient(135deg,var(--card),#0d1a3a);border:1px solid var(--border);border-radius:14px;padding:1rem 1.2rem;min-width:160px;text-align:center;transition:.2s;box-shadow:var(--shadow);
+    }
+    .flow-strip .step:hover{transform:translateY(-3px);border-color:rgba(255,255,255,.18)}
+    .flow-strip .step .num{font-family:var(--font-mono);font-size:.72rem;color:var(--text-dim);margin-bottom:.25rem}
+    .flow-strip .step h4{font-size:.9rem;font-weight:800;margin-bottom:.15rem}
+    .flow-strip .step p{font-size:.75rem;color:var(--text-dim)}
+    .flow-strip .arrow{color:var(--text-dim);font-size:1.1rem;line-height:1;margin-top:-.3rem;font-weight:700}
 
     /* Details panel */
     .details-panel{
-      background:linear-gradient(160deg,#08122a 0%,#0b1120 100%);border:1px solid var(--border);border-radius:var(--radius);padding:2.5rem 2rem;box-shadow:var(--shadow);
+      background:linear-gradient(160deg,#0a1636 0%,#070f2a 100%);border:1px solid var(--border);border-radius:var(--radius);padding:2.8rem 2.2rem;box-shadow:var(--shadow);
     }
-    .details-panel h3{font-size:1.4rem;font-weight:800;margin-bottom:.2rem}
-    .details-panel .meta{font-family:var(--font-mono);color:var(--accent);font-size:.85rem;margin-bottom:1.2rem}
-    .details-panel .body-text{color:var(--text-sub);font-size:1.05rem;margin-bottom:1.5rem}
+    .details-panel h3{font-size:1.6rem;font-weight:800;margin-bottom:.2rem}
+    .details-panel .meta{font-family:var(--font-mono);color:var(--accent);font-size:.9rem;margin-bottom:1.2rem}
+    .details-panel .body-text{color:var(--text-sub);font-size:1.05rem;margin-bottom:1.8rem;line-height:1.7}
     .tech-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1rem}
-    .tech-card{
-      background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:1.2rem;transition:.2s;
-    }
-    .tech-card:hover{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.15)}
-    .tech-card h4{font-size:.95rem;font-weight:700;margin-bottom:.25rem;display:flex;align-items:center;gap:.45rem}
-    .tech-card .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-    .tech-card p{font-size:.85rem;color:var(--text-sub);line-height:1.5}
+    .tech-card{background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:1.3rem;transition:.2s;position:relative;overflow:hidden}
+    .tech-card:hover{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.15);transform:translateY(-2px)}
+    .tech-card h4{font-size:.98rem;font-weight:800;margin-bottom:.3rem;display:flex;align-items:center;gap:.5rem}
+    .tech-card .dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;box-shadow:0 0 6px currentColor}
+    .tech-card p{font-size:.88rem;color:var(--text-sub);line-height:1.55}
 
-    /* Educational callouts */
-    .callout{
-      border-left:3px solid var(--accent);background:rgba(0,212,170,.06);border-radius:0 14px 14px 0;padding:1.2rem 1.4rem;margin:1.2rem 0;
-    }
-    .callout h4{font-size:.9rem;font-weight:800;color:var(--accent);margin-bottom:.35rem;display:flex;align-items:center;gap:.5rem}
-    .callout p{font-size:.92rem;color:var(--text-sub)}
+    /* Callouts */
+    .callout{border-left:4px solid var(--accent);background:rgba(0,212,170,.06);border-radius:0 16px 16px 0;padding:1.3rem 1.5rem;margin:1.2rem 0}
+    .callout h4{font-size:1rem;font-weight:800;color:var(--accent);margin-bottom:.4rem;display:flex;align-items:center;gap:.5rem}
+    .callout p{font-size:.95rem;color:var(--text-sub);line-height:1.6}
+    .callout.danger{border-left-color:var(--danger);background:rgba(255,90,90,.06)}
+    .callout.danger h4{color:var(--danger)}
+    .callout.warning{border-left-color:var(--warning);background:rgba(245,158,11,.06)}
+    .callout.warning h4{color:var(--warning)}
 
-    /* Visual flow diagram */
-    .flow-strip{position:relative;padding:3.5rem 1rem 2rem;overflow:hidden}
-    .flow-strip .track{
-      display:flex;gap:.5rem;align-items:center;justify-content:center;flex-wrap:wrap;position:relative;z-index:1;
-    }
-    .flow-strip .step{
-      background:linear-gradient(135deg,var(--card),#0d1835);border:1px solid var(--border);border-radius:14px;padding:1.1rem 1.3rem;min-width:170px;text-align:center;transition:.2s;position:relative;box-shadow:var(--shadow);
-    }
-    .flow-strip .step:hover{transform:translateY(-4px);border-color:rgba(255,255,255,.15)}
-    .flow-strip .step .num{font-family:var(--font-mono);font-size:.7rem;color:var(--text-dim);margin-bottom:.3rem}
-    .flow-strip .step h4{font-size:.92rem;font-weight:800;margin-bottom:.2rem}
-    .flow-strip .step p{font-size:.78rem;color:var(--text-dim)}
-    /* Arrow connectors via pseudo elements using a simple decorative line */
-    .flow-strip .arrow{color:var(--text-dim);font-size:1.2rem;line-height:1;margin-top:-.4rem}
+    /* Real-world examples */
+    .example-card{background:linear-gradient(160deg,var(--card),#0b1b3a);border:1px solid var(--border);border-radius:16px;padding:1.5rem;margin:1rem 0;transition:.2s}
+    .example-card:hover{border-color:rgba(255,255,255,.15);transform:translateY(-2px)}
+    .example-card h4{font-size:1.05rem;font-weight:800;margin-bottom:.4rem;color:#fff}
+    .example-card .map{font-family:var(--font-mono);font-size:.78rem;color:var(--accent);margin-bottom:.4rem}
+    .example-card p{font-size:.9rem;color:var(--text-sub);line-height:1.6}
 
-    /* Stats row */
-    .stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.2rem;margin:3rem 0 1rem}
-    .stat-box{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:1.4rem;text-align:center;box-shadow:var(--shadow)}
-    .stat-box .value{font-family:var(--font-mono);font-size:2.2rem;font-weight:900;color:var(--accent);line-height:1}
-    .stat-box .label{font-size:.85rem;color:var(--text-dim);margin-top:.25rem;font-weight:600}
+    /* Poster section */
+    .poster-section{text-align:center;padding:4rem 1rem;background:linear-gradient(180deg,transparent,#040a14);border-top:1px solid var(--border);border-bottom:1px solid var(--border);margin:4rem 0}
+    .poster-section img{border-radius:16px;box-shadow:0 30px 80px rgba(0,0,0,.8);border:1px solid rgba(255,255,255,.08);max-width:960px;margin:1.5rem auto 1rem}
+    .poster-section h3{font-size:1.6rem;font-weight:800;margin-bottom:.4rem}
+    .poster-section p{color:var(--text-sub);font-size:1rem;max-width:640px;margin:0 auto 1.5rem}
 
-    /* Footer */
-    footer{text-align:center;padding:3rem 1rem;color:var(--text-dim);font-size:.85rem;border-top:1px solid var(--border);margin-top:4rem;background:#030814}
-    footer a{color:var(--text-sub);text-decoration:none;border-bottom:1px solid rgba(255,255,255,.1);padding-bottom:.1rem}
-    footer a:hover{color:var(--accent)}
+    /* Footer amélioré */
+    footer{text-align:center;padding:4rem 1.5rem;color:var(--text-dim);font-size:.9rem;border-top:1px solid var(--border);margin-top:5rem;background:#020610}
+    footer a{color:var(--text-sub);text-decoration:none;border-bottom:1px solid rgba(255,255,255,.12);padding-bottom:.15rem;transition:.2s}
+    footer a:hover{color:var(--accent);border-color:var(--accent)}
+    .footer-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:2rem;max-width:1000px;margin:0 auto 2rem;text-align:left}
+    .footer-grid h4{font-weight:800;font-size:1rem;color:#fff;margin-bottom:.8rem;letter-spacing:.02em}
+    .footer-grid ul{list-style:none}
+    .footer-grid li{margin-bottom:.4rem;font-size:.85rem;color:var(--text-dim)}
+    .footer-grid a{color:var(--text-sub);border:none;text-decoration:none;font-weight:600}
+    .footer-grid a:hover{color:var(--accent)}
 
-    /* Responsive */
-    @media(max-width:640px){
-      .hero h1{font-size:2.4rem}
+    /* Responsive amélioré */
+    @media(max-width:768px){
+      .hero h1{font-size:2.6rem}
       .tactics{grid-template-columns:1fr}
       .tech-grid{grid-template-columns:1fr}
+      .stats-row{grid-template-columns:1fr 1fr}
     }
   </style>
 </head>
@@ -161,53 +178,56 @@
   <!-- Hero -->
   <header class="hero" id="top">
     <div class="hero-inner">
-      <div class="badge"><span></span> Ressource éducative — Cybersécurité</div>
+      <div class="badge"><span></span> Ressource éducative complète — Cybersécurité</div>
       <h1>Carte interactive <span class="highlight">MITRE ATT&CK</span></h1>
-      <p class="subtitle">Découvrez toutes les tactiques, techniques et sous-techniques du framework. Un guide visuel et pédagogique pour comprendre comment les attaquants opèrent — et comment s'en défendre.</p>
+      <p class="subtitle">Guide visuel et pédagogique pour comprendre le comportement des attaquants — toutes les tactiques, techniques, exemples réels, et conseils de défense, entièrement en français.</p>
       <div class="cta-row">
         <a href="#tactiques" class="btn btn-primary">Explorer la matrice</a>
-        <a href="#explications" class="btn btn-secondary">Lire les explications</a>
+        <a href="#explications" class="btn btn-secondary">Lire le guide</a>
+      </div>
+      <div class="hero-visual">
+        <img src="mitre-poster.png" alt="Poster éducatif MITRE ATT&CK montrant la matrice complète des 14 tactiques" loading="eager">
       </div>
     </div>
   </header>
 
   <main>
 
-    <!-- Intro éducative -->
+    <!-- Intro -->
     <section id="explications">
       <div class="section-header">
-        <div class="eyebrow">Qu'est-ce que c'est ?</div>
-        <h2>Le framework MITRE ATT&CK</h2>
-        <p>Un référentiel mondial qui décrit le comportement des adversaires informatiques. Il aide à comprendre, détecter et contrer les attaques.</p>
+        <div class="eyebrow">Comprendre le framework</div>
+        <h2>Qu'est-ce que MITRE ATT&CK ?</h2>
+        <p>Un référentiel mondial ouvert qui décrit comment les adversaires informatiques opèrent. Il structure leur comportement en 14 tactiques, des centaines de techniques et des milliers de sous-techniques.</p>
       </div>
 
       <div class="stats-row" aria-label="Statistiques du framework">
         <div class="stat-box"><div class="value">14</div><div class="label">Tactiques</div></div>
         <div class="stat-box"><div class="value">250+</div><div class="label">Techniques</div></div>
         <div class="stat-box"><div class="value">700+</div><div class="label">Sous-techniques</div></div>
-        <div class="stat-box"><div class="value">3</div><div class="label">Niveaux (Tactique → Technique → Sous-technique)</div></div>
+        <div class="stat-box"><div class="value">3</div><div class="label">Niveaux hiérarchiques</div></div>
       </div>
 
       <div class="callout">
-        <h4>📌 Définition clé</h4>
-        <p><strong>Tactique</strong> = l'objectif de l'attaquant (ex : obtenir un accès initial). <strong>Technique</strong> = la méthode générale (ex : phishing). <strong>Sous-technique</strong> = la variante précise (ex : phishing par lien).</p>
+        <h4>📌 Définition clé — Les 3 niveaux</h4>
+        <p><strong>Tactique (TAxxxx)</strong> = l'objectif de l'attaquant à un moment donné (ex : obtenir un accès). <strong>Technique (Txxxx)</strong> = la méthode générale (ex : phishing). <strong>Sous-technique (Txxxx.xxx)</strong> = la variante précise (ex : phishing par lien malveillant).</p>
       </div>
 
-      <div class="callout">
-        <h4>🎯 Pourquoi c'est utile</h4>
-        <p>Les équipes de sécurité utilisent ATT&CK pour cartographier leurs défenses, détecter des lacunes, entraîner leurs outils, et simuler des attaques réalistes (red teaming).</p>
+      <div class="callout warning">
+        <h4>🎯 Pourquoi c'est essentiel</h4>
+        <p>Les équipes de sécurité utilisent ATT&CK pour cartographier leurs défenses, créer des règles de détection basées sur des comportements réels, simuler des attaques (red teaming), et prioriser leurs investissements.</p>
       </div>
     </section>
 
-    <!-- Flow visuel -->
-    <section aria-label="Cycle d'attaque" style="padding-top:2rem; padding-bottom:4rem;">
-      <div class="section-header" style="margin-bottom:2rem;">
-        <div class="eyebrow">Le cycle d'attaque</div>
+    <!-- Cycle visuel -->
+    <section aria-label="Cycle d'attaque" style="padding-top:2rem; padding-bottom:3rem;">
+      <div class="section-header" style="margin-bottom:2.5rem;">
+        <div class="eyebrow">Le parcours de l'adversaire</div>
         <h2>Comment une attaque progresse</h2>
-        <p>Chaque tactique représente une étape dans le parcours de l'adversaire.</p>
+        <p>Chaque tactique représente une étape logique dans le parcours d'un attaquant, de la reconnaissance jusqu'à l'impact final.</p>
       </div>
       <div class="flow-strip">
-        <div class="track" aria-label="Étapes d'une intrusion">
+        <div class="track" aria-label="Première moitié du cycle d'intrusion">
           <div class="step"><div class="num">TA0043</div><h4>Reconnaissance</h4><p>Collecte d'infos</p></div>
           <span class="arrow">→</span>
           <div class="step"><div class="num">TA0042</div><h4>Développement</h4><p>Préparation</p></div>
@@ -218,7 +238,7 @@
           <span class="arrow">→</span>
           <div class="step"><div class="num">TA0003</div><h4>Persistance</h4><p>Maintien</p></div>
         </div>
-        <div class="track" style="margin-top:1rem;" aria-label="Suite de l'intrusion">
+        <div class="track" style="margin-top:1rem;" aria-label="Deuxième moitié du cycle d'intrusion">
           <div class="step"><div class="num">TA0004</div><h4>Élévation</h4><p>Privilèges</p></div>
           <span class="arrow">→</span>
           <div class="step"><div class="num">TA0005</div><h4>Évasion</h4><p>Défense</p></div>
@@ -227,125 +247,124 @@
           <span class="arrow">→</span>
           <div class="step"><div class="num">TA0007</div><h4>Découverte</h4><p>Exploration</p></div>
           <span class="arrow">→</span>
-          <div class="step"><div class="num">TA0008</div><h4>Mouvement</h4><p>Latéral</p></div>
+          <div class="step"><div class="num">TA0008</div><h4>Mouvement latéral</h4><p>Déplacement</p></div>
         </div>
-        <div class="track" style="margin-top:1rem;" aria-label="Objectifs finaux">
-          <div class="step"><div class="num">TA0009</div><h4>Collecte</h4><p>Données</p></div>
+        <div class="track" style="margin-top:1rem;" aria-label="Objectifs finaux de l'intrusion">
+          <div class="step"><div class="num">TA0009</div><h4>Collecte</h4><p>Données ciblées</p></div>
           <span class="arrow">→</span>
-          <div class="step"><div class="num">TA0011</div><h4>C2</h4><p>Contrôle</p></div>
+          <div class="step"><div class="num">TA0011</div><h4>C2</h4><p>Contrôle distant</p></div>
           <span class="arrow">→</span>
-          <div class="step"><div class="num">TA0010</div><h4>Exfiltration</h4><p>Vol</p></div>
+          <div class="step"><div class="num">TA0010</div><h4>Exfiltration</h4><p>Transfert des données</p></div>
           <span class="arrow">→</span>
           <div class="step"><div class="num">TA0040</div><h4>Impact</h4><p>Destruction</p></div>
         </div>
       </div>
     </section>
 
-    <!-- Matrice complète -->
-    <section id="tactiques" aria-label="Matrice des tactiques MITRE ATT&CK">
+    <!-- Matrice des 14 tactiques -->
+    <section id="tactiques" aria-label="Matrice des 14 tactiques MITRE ATT&CK">
       <div class="section-header">
-        <div class="eyebrow">Matrice complète</div>
+        <div class="eyebrow">Matrice interactive</div>
         <h2>Les 14 tactiques expliquées</h2>
-        <p>Cliquez sur une tactique pour voir ses techniques, explications et conseils de défense.</p>
+        <p>Cliquez sur une tactique pour découvrir ses techniques principales, des exemples concrets et des conseils de défense détaillés.</p>
       </div>
 
-      <div class="tactics" role="list" aria-label="Liste des tactiques MITRE ATT&CK">
-        <!-- 14 cards -->
-        <article class="tactic-card" onclick="showDetail('recon')" role="listitem" tabindex="0" aria-label="Reconnaissance, TA0043">
+      <div class="tactics" role="list" aria-label="Liste des 14 tactiques MITRE ATT&CK">
+        <article class="tactic-card" onclick="showDetail('recon')" role="listitem" tabindex="0" aria-label="Reconnaissance TA0043">
           <div class="tactic-id">TA0043 — Reconnaissance</div>
           <h3>Reconnaissance</h3>
-          <p class="desc">Collecte d'informations sur la cible avant l'attaque : scans, recherches publiques, phishing pour infos.</p>
+          <p class="desc">Collecte d'informations sur la cible avant l'attaque : scans de ports, recherches publiques, analyse de réseaux sociaux, phishing informatif.</p>
           <div class="tags"><span class="tag accent">TA0043</span><span class="tag">Scan actif</span><span class="tag">Recherche ouverte</span></div>
         </article>
 
-        <article class="tactic-card" onclick="showDetail('resource')" role="listitem" tabindex="0" aria-label="Développement de ressources, TA0042">
+        <article class="tactic-card" onclick="showDetail('resource')" role="listitem" tabindex="0" aria-label="Développement des ressources TA0042">
           <div class="tactic-id">TA0042 — Développement</div>
           <h3>Développement des ressources</h3>
-          <p class="desc">Préparation des outils et infrastructures : acquisition de comptes, domaines, serveurs C2.</p>
+          <p class="desc">Préparation des outils et infrastructures : acquisition de comptes, domaines, certificats frauduleux, serveurs C2, développement d'outils personnalisés.</p>
           <div class="tags"><span class="tag accent">TA0042</span><span class="tag">Infrastructure</span><span class="tag">Outils</span></div>
         </article>
 
-        <article class="tactic-card" onclick="showDetail('initial')" role="listitem" tabindex="0" aria-label="Accès initial, TA0001">
+        <article class="tactic-card" onclick="showDetail('initial')" role="listitem" tabindex="0" aria-label="Accès initial TA0001">
           <div class="tactic-id">TA0001 — Accès initial</div>
           <h3>Accès initial</h3>
-          <p class="desc">Premier point d'entrée dans le réseau : phishing, exploitation d'applications publiques, comptes valides.</p>
+          <p class="desc">Premier point d'entrée dans le réseau : phishing (lien, pièce jointe), exploitation d'applications exposées, comptes valides volés, compromission de la chaîne d'approvisionnement.</p>
           <div class="tags"><span class="tag accent">TA0001</span><span class="tag">Phishing</span><span class="tag">Exploitation</span></div>
         </article>
 
-        <article class="tactic-card" onclick="showDetail('execution')" role="listitem" tabindex="0" aria-label="Exécution, TA0002">
+        <article class="tactic-card" onclick="showDetail('execution')" role="listitem" tabindex="0" aria-label="Exécution TA0002">
           <div class="tactic-id">TA0002 — Exécution</div>
           <h3>Exécution</h3>
-          <p class="desc">Exécution de code malveillant sur le système : scripts, interpréteurs de commandes, macros.</p>
+          <p class="desc">Exécution de code malveillant : interpréteurs de commandes (PowerShell, Bash, Python), macros dans des documents, scripts téléchargés, tâches planifiées.</p>
           <div class="tags"><span class="tag accent">TA0002</span><span class="tag">Scripts</span><span class="tag">Macros</span></div>
         </article>
 
-        <article class="tactic-card" onclick="showDetail('persistence')" role="listitem" tabindex="0" aria-label="Persistance, TA0003">
+        <article class="tactic-card" onclick="showDetail('persistence')" role="listitem" tabindex="0" aria-label="Persistance TA0003">
           <div class="tactic-id">TA0003 — Persistance</div>
           <h3>Persistance</h3>
-          <p class="desc">Maintien de l'accès malgré redémarrage ou changement de mot de passe : tâches programmées, services.</p>
-          <div class="tags"><span class="tag accent">TA0003</span><span class="tag">Tâches</span><span class="tag">Autostart</span></div>
+          <p class="desc">Maintenir l'accès malgré redémarrage ou changement de mot de passe : tâches planifiées, services malveillants, clés de registre, comptes supplémentaires.</p>
+          <div class="tags"><span class="tag accent">TA0003</span><span class="tag">Autostart</span><span class="tag">Tâches</span></div>
         </article>
 
-        <article class="tactic-card" onclick="showDetail('priv')" role="listitem" tabindex="0" aria-label="Élévation de privilèges, TA0004">
+        <article class="tactic-card" onclick="showDetail('priv')" role="listitem" tabindex="0" aria-label="Élévation de privilèges TA0004">
           <div class="tactic-id">TA0004 — Élévation</div>
           <h3>Élévation de privilèges</h3>
-          <p class="desc">Obtention de droits supérieurs : injection de processus, token manipulation, abus de contrôle d'élévation.</p>
+          <p class="desc">Passer d'un compte standard à administrateur : injection de processus, manipulation de tokens d'accès, contournement de UAC, exploitation de vulnérabilités locales.</p>
           <div class="tags"><span class="tag accent">TA0004</span><span class="tag">Injection</span><span class="tag">Tokens</span></div>
         </article>
 
-        <article class="tactic-card" onclick="showDetail('evasion')" role="listitem" tabindex="0" aria-label="Évasion de défense, TA0005">
+        <article class="tactic-card" onclick="showDetail('evasion')" role="listitem" tabindex="0" aria-label="Évasion de défense TA0005">
           <div class="tactic-id">TA0005 — Évasion</div>
           <h3>Évasion de défense</h3>
-          <p class="desc">Éviter la détection : désactivation d'outils, fichiers obscurcis, suppression d'indicateurs.</p>
+          <p class="desc">Éviter la détection : désactivation d'antivirus/EDR, fichiers obscurcis (compression, chiffrement, stéganographie), suppression des journaux d'événements.</p>
           <div class="tags"><span class="tag accent">TA0005</span><span class="tag">Obfuscation</span><span class="tag">Désactivation</span></div>
         </article>
 
-        <article class="tactic-card" onclick="showDetail('credential')" role="listitem" tabindex="0" aria-label="Accès aux crédentiels, TA0006">
+        <article class="tactic-card" onclick="showDetail('credential')" role="listitem" tabindex="0" aria-label="Accès aux crédentiels TA0006">
           <div class="tactic-id">TA0006 — Crédentiels</div>
           <h3>Accès aux crédentiels</h3>
-          <p class="desc">Vol d'identifiants : dumping mémoire LSASS, brute force, clés de mot de passe stockées.</p>
+          <p class="desc">Vol de mots de passe et identifiants : dumping mémoire LSASS (Mimikatz), brute-force, extraction depuis navigateurs et gestionnaires de mots de passe.</p>
           <div class="tags"><span class="tag accent">TA0006</span><span class="tag">Dumping</span><span class="tag">Brute force</span></div>
         </article>
 
-        <article class="tactic-card" onclick="showDetail('discovery')" role="listitem" tabindex="0" aria-label="Découverte, TA0007">
+        <article class="tactic-card" onclick="showDetail('discovery')" role="listitem" tabindex="0" aria-label="Découverte TA0007">
           <div class="tactic-id">TA0007 — Découverte</div>
           <h3>Découverte</h3>
-          <p class="desc">Exploration du réseau et du système : comptes, services, configurations réseau.</p>
+          <p class="desc">Exploration du réseau et du système : comptes utilisateurs, services réseau, configurations, partages de fichiers, systèmes accessibles.</p>
           <div class="tags"><span class="tag accent">TA0007</span><span class="tag">Système</span><span class="tag">Réseau</span></div>
         </article>
 
-        <article class="tactic-card" onclick="showDetail('lateral')" role="listitem" tabindex="0" aria-label="Mouvement latéral, TA0008">
+        <article class="tactic-card" onclick="showDetail('lateral')" role="listitem" tabindex="0" aria-label="Mouvement latéral TA0008">
           <div class="tactic-id">TA0008 — Latéral</div>
           <h3>Mouvement latéral</h3>
-          <p class="desc">Déplacement dans le réseau vers d'autres systèmes : RDP, SMB, SSH, services distants.</p>
+          <p class="desc">Déplacement dans le réseau : RDP, SMB/Windows Admin Shares, SSH, VNC, passage du hash (Pass the Hash), utilisation d'outils légitimes.</p>
           <div class="tags"><span class="tag accent">TA0008</span><span class="tag">RDP</span><span class="tag">SMB</span></div>
         </article>
 
-        <article class="tactic-card" onclick="showDetail('collection')" role="listitem" tabindex="0" aria-label="Collecte, TA0009">
+        <article class="tactic-card" onclick="showDetail('collection')" role="listitem" tabindex="0" aria-label="Collecte TA0009">
           <div class="tactic-id">TA0009 — Collecte</div>
           <h3>Collecte</h3>
-          <p class="desc">Rassemblement des données cibles : capture d'écran, enregistrement audio, collecte locale.</p>
+          <p class="desc">Rassemblement des données ciblées : fichiers sensibles, emails, captures d'écran, enregistrements audio, données dans les dépôts (SharePoint, bases).</p>
           <div class="tags"><span class="tag accent">TA0009</span><span class="tag">Écran</span><span class="tag">Audio</span></div>
         </article>
 
-        <article class="tactic-card" onclick="showDetail('c2')" role="listitem" tabindex="0" aria-label="Commandement et contrôle, TA0011">
+        <article class="tactic-card" onclick="showDetail('c2')" role="listitem" tabindex="0" aria-label="Commandement et contrôle TA0011">
           <div class="tactic-id">TA0011 — C2</div>
           <h3>Commandement et contrôle</h3>
-          <p class="desc">Canal de communication avec le système compromis : protocoles applicatifs, canaux chiffrés.</p>
+          <p class="desc">Canal de communication distant : protocoles applicatifs (HTTP, HTTPS, DNS), canaux chiffrés, tunnels (SSH, VPN), services cloud (Discord, Slack, Dropbox).</p>
           <div class="tags"><span class="tag accent">TA0011</span><span class="tag">HTTPS</span><span class="tag">DNS</span></div>
         </article>
 
-        <article class="tactic-card" onclick="showDetail('exfil')" role="listitem" tabindex="0" aria-label="Exfiltration, TA0010">
+        <article class="tactic-card" onclick="showDetail('exfil')" role="listitem" tabindex="0" aria-label="Exfiltration TA0010">
           <div class="tactic-id">TA0010 — Exfiltration</div>
           <h3>Exfiltration</h3>
-          <p class="desc">Transfert des données volées hors du réseau : sur service web, canal C2, support physique.</p>
+          <p class="desc">Transfert des données volées hors de l'environnement : via le canal C2, services web légitimes (Google Drive, Dropbox), protocoles alternatifs (Bluetooth, WiFi).</p>
           <div class="tags"><span class="tag accent">TA0010</span><span class="tag">Web</span><span class="tag">C2</span></div>
         </article>
 
-        <article class="tactic-card" onclick="showDetail('impact')" role="listitem" tabindex="0" aria-label="Impact, TA0040">
+        <article class="tactic-card" onclick="showDetail('impact')" role="listitem" tabindex="0" aria-label="Impact TA0040">
           <div class="tactic-id">TA0040 — Impact</div>
           <h3>Impact</h3>
-          <p class="desc">Perturbation ou destruction : chiffrement (ransomware), suppression, arrêt de services.</p>
+          <p class="desc">Perturbation ou destruction : chiffrement (ransomware), suppression massive de données, arrêt de services critiques, corruption de données, redémarrage forcé.</p>
           <div class="tags"><span class="tag accent">TA0040</span><span class="tag">Ransomware</span><span class="tag">Destruction</span></div>
         </article>
       </div>
@@ -357,190 +376,248 @@
         <div class="meta" id="detail-id">TA — Nom</div>
         <h3 id="detail-title">Titre</h3>
         <p class="body-text" id="detail-desc">Description complète...</p>
-        <h4 style="font-weight:800;margin-bottom:.8rem;color:var(--text);font-size:1.05rem;">Techniques clés et exemples</h4>
+        <h4 style="font-weight:800;margin-bottom:1rem;color:var(--text);font-size:1.1rem;">Techniques clés et exemples</h4>
         <div class="tech-grid" id="detail-techs"></div>
-        <div class="callout" style="margin-top:1.5rem;">
+        <div class="callout" style="margin-top:1.8rem;">
           <h4>💡 Conseil de défense</h4>
           <p id="detail-defense">Pour cette tactique, surveillez...</p>
         </div>
       </div>
     </section>
 
-    <!-- Section éducative : comment se défendre -->
-    <section aria-label="Conseils de défense">
+    <!-- Exemples réels -->
+    <section aria-label="Exemples d'attaques réelles">
+      <div class="section-header">
+        <div class="eyebrow">Cas réels</div>
+        <h2>Attaques célèbres mappées sur ATT&CK</h2>
+        <p>Voir comment des attaques réelles suivent exactement le cycle décrit par le framework.</p>
+      </div>
+      <div class="example-card">
+        <h4>NotPetya (2017) — L'attaque la plus coûteuse de l'histoire</h4>
+        <div class="map">Reconnaissance → Développement → Accès initial → Exécution → Persistance → Élévation → Évasion → Mouvement latéral → Impact</div>
+        <p>NotPetya a utilisé la mise à jour malveillante de MeDoc (chaîne d'approvisionnement) pour l'accès initial. Il s'est propagé via EternalBlue et PsExec (mouvement latéral), a supprimé des journaux (évasion), et a chiffré massivement des systèmes (impact). L'impact financier estimé dépasse 10 milliards de dollars.</p>
+      </div>
+      <div class="example-card">
+        <h4>SolarWinds (2020) — Compromission de la chaîne d'approvisionnement</h4>
+        <div class="map">Développement → Accès initial → Persistance → Évasion → C2 → Collecte → Exfiltration</div>
+        <p>Les attaquants ont compromis le processus de build de SolarWinds, injectant un backdoor dans des mises à jour légitimes. Ils ont utilisé des noms de processus légitimes (évasion), communiqué via HTTPS vers des domaines contrôlés (C2), et collecté des données sensibles dans le cloud avant exfiltration progressive.</p>
+      </div>
+    </section>
+
+    <!-- Défense -->
+    <section aria-label="Stratégies de défense">
       <div class="section-header">
         <div class="eyebrow">Défense</div>
         <h2>Comment utiliser ATT&CK pour se protéger</h2>
-        <p>Le framework n'est pas seulement un catalogue d'attaques : c'est un outil de cartographie des défenses.</p>
+        <p>Le framework n'est pas seulement un catalogue d'attaques — c'est un outil opérationnel de défense.</p>
       </div>
       <div class="tactics" style="grid-template-columns:repeat(auto-fill,minmax(260px,1fr));">
         <div class="tactic-card" style="border-left:4px solid var(--accent);">
           <h3>Cartographier</h3>
-          <p class="desc">Comparez vos outils de sécurité (EDR, SIEM, pare-feu) aux techniques ATT&CK pour identifier les lacunes.</p>
+          <p class="desc">Comparez vos outils (EDR, SIEM, pare-feu) aux techniques ATT&CK. Identifiez quelles techniques ne sont pas couvertes par vos contrôles actuels.</p>
         </div>
         <div class="tactic-card" style="border-left:4px solid var(--accent2);">
           <h3>Détecter</h3>
-          <p class="desc">Créez des règles de détection basées sur des techniques réelles plutôt que sur des signatures malveillantes fixes.</p>
+          <p class="desc">Créez des règles basées sur des comportements réels (ex : Word lançant PowerShell) plutôt que des signatures fixes de malware.</p>
         </div>
         <div class="tactic-card" style="border-left:4px solid var(--accent3);">
           <h3>Simuler</h3>
-          <p class="desc">Utilisez le framework pour simuler des attaques (red team) et valider l'efficacité de vos contrôles.</p>
+          <p class="desc">Simulez des attaques (red team) basées sur des groupes APT connus (APT29, APT28) en suivant leurs techniques documentées.</p>
         </div>
         <div class="tactic-card" style="border-left:4px solid var(--danger);">
           <h3>Prioriser</h3>
-          <p class="desc">Concentrez vos ressources sur les tactiques et techniques les plus utilisées par les groupes de menaces actifs.</p>
+          <p class="desc">Concentrez vos ressources sur les tactiques et techniques les plus utilisées par les menaces actives dans votre secteur.</p>
         </div>
       </div>
+      <div class="callout" style="margin-top:2rem; max-width:900px; margin-left:auto; margin-right:auto;">
+        <h4>🔍 Méthode recommandée — Coverage Mapping</h4>
+        <p>Pour chaque technique ATT&CK, posez la question : <strong>"Mon EDR détecte-t-il cela ?"</strong>, <strong>"Mon SIEM a-t-il une règle pour cela ?"</strong>, <strong>"Mon pare-feu bloque-t-il cela ?"</strong>. Les lacunes identifiées deviennent votre feuille de route pour améliorer vos défenses.</p>
+      </div>
+    </section>
+
+    <!-- Poster visuel -->
+    <section class="poster-section" aria-label="Poster éducatif MITRE ATT&CK">
+      <h3>Poster éducatif — Vue d'ensemble de la matrice</h3>
+      <p>Cette affiche résume visuellement les 14 tactiques, leurs techniques principales et leurs interconnexions dans le cycle d'attaque.</p>
+      <img src="mitre-poster.png" alt="Poster éducatif MITRE ATT&CK — Matrice complète des 14 tactiques avec techniques clés et cycle d'attaque" loading="lazy">
+      <p><a href="mitre-complet.md" class="btn btn-secondary" style="margin-top:1rem;">Télécharger le guide complet (Markdown)</a> <a href="#tactiques" class="btn btn-primary" style="margin-top:1rem;">Explorer la matrice interactive</a></p>
     </section>
 
   </main>
 
   <footer>
-    <p>Carte éducative interactive — MITRE ATT&CK — construite pour l'apprentissage.</p>
-    <p>Source : MITRE Corporation — <a href="https://attack.mitre.org/" target="_blank" rel="noopener">attack.mitre.org</a> — Ce site est un support pédagogique.</p>
+    <div class="footer-grid">
+      <div>
+        <h4>Ressources MITRE</h4>
+        <ul>
+          <li><a href="https://attack.mitre.org/" target="_blank" rel="noopener">MITRE ATT&CK</a></li>
+          <li><a href="https://mitre-attack.github.io/attack-navigator/" target="_blank" rel="noopener">ATT&CK Navigator</a></li>
+          <li><a href="https://engage.mitre.org/" target="_blank" rel="noopener">MITRE Engage</a></li>
+          <li><a href="https://d3fend.mitre.org/" target="_blank" rel="noopener">D3FEND (Défenses)</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contenu de ce site</h4>
+        <ul>
+          <li><a href="#tactiques">Matrice interactive (14 tactiques)</a></li>
+          <li><a href="#explications">Guide explicatif</a></li>
+          <li><a href="#detail-section">Détail des techniques</a></li>
+          <li><a href="#tactiques">Cas réels (NotPetya, SolarWinds)</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Fichiers disponibles</h4>
+        <ul>
+          <li><a href="mitre-attack-map.html">Carte interactive (ce site)</a></li>
+          <li><a href="mitre-complet.md">Guide complet textuel</a></li>
+          <li><a href="mitre-poster.png">Poster visuel</a></li>
+        </ul>
+      </div>
+    </div>
+    <p style="margin-top:2rem; opacity:.7;">Carte éducative interactive — MITRE ATT&CK — construite pour l'apprentissage et la pédagogie. Non affilié officiellement à MITRE Corporation.</p>
   </footer>
 
   <script>
     const data = {
       recon: {
         id: 'TA0043', title: 'Reconnaissance',
-        desc: "Avant de frapper, l'attaquant collecte des informations sur la cible. Cela inclut le scan de ports, la recherche de domaines, l'analyse des réseaux sociaux, et le phishing pour obtenir des détails sur l'organisation. Cette phase est cruciale car elle détermine le succès des étapes suivantes.",
-        defense: "Surveillez les scans de ports inhabituels, limitez les informations publiques sensibles sur vos sites, et formez vos équipes au phishing informatif.",
+        desc: "Avant de frapper, l'attaquant collecte des informations sur la cible. Cela inclut le scan de ports et services ouverts (T1595), la recherche de domaines et sous-domaines, l'analyse des réseaux sociaux et profils professionnels (LinkedIn) pour identifier des employés ciblés, et le phishing informatif pour obtenir des détails sur l'organisation et ses technologies.",
+        defense: "Surveillez les scans de ports inhabituels avec des systèmes IDS/IPS. Limitez les informations sensibles publiées sur vos sites web et réseaux sociaux. Formez régulièrement vos équipes au phishing informatif et mettez en place des systèmes de réputation de domaines.",
         techs: [
-          {name:'T1595 — Scan actif', dot:'#f59e0b', desc:'Recherche active de ports et services ouverts.'},
-          {name:'T1590 — Découverte de réseau', dot:'#00a8e8', desc:'Identification de la topologie et des actifs.'},
-          {name:'T1592 — Informations clients', dot:'#6366f1', desc:'Collecte de données sur la victime.'},
-          {name:'T1593 — Recherche sur les sites ouverts', dot:'#00d4aa', desc:'Recherche dans les bases publiques et médias sociaux.'},
+          {name:'T1595 — Scan actif', dot:'#f59e0b', desc:'Recherche active de ports, services et vulnérabilités ouverts sur la cible.'},
+          {name:'T1590 — Découverte de réseau', dot:'#00a8e8', desc:'Identification de la topologie, des actifs et des relations entre systèmes.'},
+          {name:'T1592 — Informations sur la victime', dot:'#6366f1', desc:'Collecte de données sur l\'organisation : employés, technologies utilisées, partenaires.'},
+          {name:'T1593 — Recherche sur sites ouverts', dot:'#00d4aa', desc:'Recherche dans les bases de données publiques, médias sociaux et archives web.'},
         ]
       },
       resource: {
         id: 'TA0042', title: 'Développement des ressources',
-        desc: "L'adversaire acquiert ou crée les capacités nécessaires : comptes compromis, infrastructures de commande et contrôle, certificats, outils malveillants. Cette préparation rend l'attaque plus résiliente et difficile à attribuer.",
-        defense: "Surveillez la création de nouveaux comptes administrateurs, limitez l'accès aux environnements sensibles, et utilisez des systèmes de réputation de domaines.",
+        desc: "L'adversaire acquiert ou crée les capacités nécessaires avant l'attaque. Cela comprend l'achat ou la location d'infrastructures (serveurs, domaines, IPs), la compromission d'infrastructures existantes, et le développement ou l'acquisition d'outils malveillants, d'exploits et de malware personnalisé.",
+        defense: "Surveillez la création de nouveaux comptes administrateurs et la modification d'infrastructures critiques. Utilisez des systèmes de réputation de domaines et d'IP, et auditez régulièrement vos environnements cloud pour détecter des ressources non autorisées.",
         techs: [
-          {name:'T1583 — Acquisition d\'infrastructure', dot:'#f59e0b', desc:'Achat ou location de serveurs, domaines, IPs.'},
-          {name:'T1584 — Compromission d\'infrastructure', dot:'#00a8e8', desc:'Utilisation d\'infrastructures existantes.'},
-          {name:'T1588 — Acquisition de capacités', dot:'#6366f1', desc:'Obtention d\'outils, exploits et malware.'},
+          {name:'T1583 — Acquisition d\'infrastructure', dot:'#f59e0b', desc:'Achat ou location de serveurs, domaines, adresses IP et certificats SSL.'},
+          {name:'T1584 — Compromission d\'infrastructure', dot:'#00a8e8', desc:'Utilisation d\'infrastructures existantes (sites légitimes compromis) pour l\'attaque.'},
+          {name:'T1588 — Acquisition de capacités', dot:'#6366f1', desc:'Obtention d\'outils, exploits, malware et frameworks d\'exploitation.'},
         ]
       },
       initial: {
         id: 'TA0001', title: 'Accès initial',
-        desc: "Le premier point d'entrée dans le réseau ou le système. Les méthodes incluent le phishing par lien ou pièce jointe, l'exploitation d'applications exposées sur Internet, et l'utilisation de comptes valides déjà compromis.",
-        defense: "Formez les utilisateurs au phishing, appliquez des mises à jour régulières sur les applications exposées, et utilisez l'authentification multifacteur.",
+        desc: "Le premier point d'entrée dans le réseau ou le système. Les méthodes incluent le phishing par lien ou pièce jointe (le vecteur le plus courant), l'exploitation d'applications exposées sur Internet non mises à jour, et l'utilisation de comptes valides déjà compromis (par exemple via des fuites de données).",
+        defense: "Formez régulièrement vos utilisateurs au phishing avec des campagnes simulées. Appliquez des mises à jour de sécurité rapides sur toutes les applications exposées. Utilisez systématiquement l'authentification multifacteur (MFA) et surveillez les connexions provenant de géolocalisations inhabituelles.",
         techs: [
-          {name:'T1566 — Phishing', dot:'#f59e0b', desc:'Envoi de messages malveillants pour obtenir un accès.'},
-          {name:'T1190 — Exploitation d\'application publique', dot:'#00a8e8', desc:'Exploitation de vulnérabilités sur des services exposés.'},
-          {name:'T1078 — Comptes valides', dot:'#6366f1', desc:'Utilisation d\'identifiants légitimes déjà volés.'},
+          {name:'T1566 — Phishing', dot:'#f59e0b', desc:'Envoi de messages malveillants (email, SMS, réseaux sociaux) pour obtenir un accès initial.'},
+          {name:'T1190 — Exploitation d\'application publique', dot:'#00a8e8', desc:'Exploitation de vulnérabilités connues sur des services exposés sur Internet.'},
+          {name:'T1078 — Comptes valides', dot:'#6366f1', desc:'Utilisation d\'identifiants légitimes déjà volés via des fuites ou du phishing.'},
         ]
       },
       execution: {
         id: 'TA0002', title: 'Exécution',
-        desc: "L'attaquant exécute du code malveillant. Cela peut se faire via des interpréteurs de commandes (PowerShell, Bash), des macros dans des documents, ou des scripts téléchargés. C'est le moment où le payload prend vie.",
-        defense: "Restreignez l'exécution de scripts non signés, désactivez les macros par défaut, et surveillez les processus enfants inhabituels.",
+        desc: "L'attaquant exécute du code malveillant sur le système. Cela peut se faire via des interpréteurs de commandes (PowerShell, Bash, Python), des macros dans des documents Office, des scripts téléchargés automatiquement, ou des tâches planifiées créées pour maintenir le code actif.",
+        defense: "Restreignez l'exécution de scripts non signés via AppLocker ou des politiques de groupe. Désactivez les macros par défaut dans les documents Office. Surveillez les processus enfants inhabituels (ex : Word lançant PowerShell) avec un EDR.",
         techs: [
-          {name:'T1059 — Interpréteur de commandes', dot:'#f59e0b', desc:'Exécution via PowerShell, cmd, Bash, Python.'},
-          {name:'T1204 — Exécution par l\'utilisateur', dot:'#00a8e8', desc:'Lancement d\'un fichier malveillant par la victime.'},
-          {name:'T1053 — Tâche planifiée / Job', dot:'#6366f1', desc:'Création de tâches pour maintenir le code actif.'},
+          {name:'T1059 — Interpréteur de commandes', dot:'#f59e0b', desc:'Exécution via PowerShell, cmd, Bash, Python, Perl et autres interpréteurs.'},
+          {name:'T1204 — Exécution par l\'utilisateur', dot:'#00a8e8', desc:'Lancement volontaire d\'un fichier malveillant par la victime (ex : double-clic sur une pièce jointe).'},
+          {name:'T1053 — Tâche planifiée / Job', dot:'#6366f1', desc:'Création de tâches récurrentes pour maintenir le code actif après redémarrage.'},
         ]
       },
       persistence: {
         id: 'TA0003', title: 'Persistance',
-        desc: "Une fois à l'intérieur, l'attaquant s'assure de rester. Les méthodes incluent la création de tâches programmées, la modification du registre, l'installation de services, ou l'ajout de scripts au démarrage.",
-        defense: "Auditez régulièrement les tâches planifiées et les services, surveillez les modifications du registre de démarrage, et utilisez des outils EDR.",
+        desc: "Une fois à l'intérieur, l'attaquant s'assure de rester même après un redémarrage, un changement de mot de passe ou une mise à jour. Les méthodes incluent la création de tâches programmées, la modification du registre Windows (Run keys), l'installation de services, ou l'ajout de nouveaux utilisateurs avec accès administrateur.",
+        defense: "Auditez régulièrement toutes les tâches planifiées et les services systèmes. Surveillez les modifications du registre de démarrage (Run, RunOnce). Utilisez des outils EDR pour détecter la création de nouveaux comptes administrateurs non autorisés.",
         techs: [
-          {name:'T1053 — Tâche planifiée', dot:'#f59e0b', desc:'Création de tâches récurrentes.'},
-          {name:'T1547 — Autostart au démarrage', dot:'#00a8e8', desc:'Modification des clés de registre ou dossiers de démarrage.'},
-          {name:'T1136 — Création de compte', dot:'#6366f1', desc:'Ajout de nouveaux utilisateurs avec accès.'},
+          {name:'T1053 — Tâche planifiée', dot:'#f59e0b', desc:'Création de tâches récurrentes qui lancent un payload au démarrage ou à intervalle régulier.'},
+          {name:'T1547 — Autostart au démarrage', dot:'#00a8e8', desc:'Modification des clés de registre ou des dossiers de démarrage pour exécuter du code automatiquement.'},
+          {name:'T1136 — Création de compte', dot:'#6366f1', desc:'Ajout de nouveaux utilisateurs (locaux ou dans le domaine) avec des privilèges élevés.'},
         ]
       },
       priv: {
         id: 'TA0004', title: 'Élévation de privilèges',
-        desc: "Passer d'un compte utilisateur standard à un administrateur ou système. Les techniques incluent l'injection de processus, la manipulation de tokens d'accès, et l'exploitation de vulnérabilités locales.",
-        defense: "Appliquez le principe du moindre privilège, surveillez l'utilisation de sudo/admin, et maintenez vos systèmes à jour contre les exploits connus.",
+        desc: "Passer d'un compte utilisateur standard à un administrateur ou système. Les techniques courantes incluent l'injection de processus dans un processus avec des privilèges supérieurs, la manipulation de tokens d'accès pour usurper un compte administrateur, et le contournement des mécanismes de contrôle d'élévation (UAC).",
+        defense: "Appliquez strictement le principe du moindre privilège. Surveillez l'utilisation de sudo, runas et autres mécanismes d'élévation. Maintenez vos systèmes à jour contre les exploits connus (ex : PrintNightmare). Utilisez Credential Guard pour protéger LSASS.",
         techs: [
-          {name:'T1055 — Injection de processus', dot:'#f59e0b', desc:'Injection dans un processus avec des privilèges supérieurs.'},
-          {name:'T1548 — Abus du contrôle d\'élévation', dot:'#00a8e8', desc:'Contournement des mécanismes UAC.'},
-          {name:'T1134 — Manipulation de tokens', dot:'#6366f1', desc:'Vol et réutilisation de tokens d\'accès.'},
+          {name:'T1055 — Injection de processus', dot:'#f59e0b', desc:'Injection de code dans un processus avec des privilèges supérieurs pour exécuter du code malveillant.'},
+          {name:'T1548 — Abus du contrôle d\'élévation', dot:'#00a8e8', desc:'Contournement des mécanismes UAC (User Account Control) sur Windows.'},
+          {name:'T1134 — Manipulation de tokens', dot:'#6366f1', desc:'Vol et réutilisation de tokens d\'accès pour obtenir des privilèges supérieurs.'},
         ]
       },
       evasion: {
         id: 'TA0005', title: 'Évasion de défense',
-        desc: "L'attaquant cherche à éviter la détection par les antivirus, EDR et analystes. Techniques : fichiers obfusqués, désactivation des outils de sécurité, suppression des journaux, et masquage des processus.",
-        defense: "Utilisez des solutions EDR modernes avec comportemental, activez la protection contre la désactivation, et conservez des journaux immuables.",
+        desc: "L'attaquant cherche à éviter la détection par les antivirus, les solutions EDR et les analystes de sécurité. Les techniques incluent la désactivation d'outils de sécurité, l'obfuscation des fichiers malveillants (compression, chiffrement, stéganographie), la suppression des journaux d'événements, et le masquage de processus sous des noms légitimes.",
+        defense: "Utilisez des solutions EDR modernes avec analyse comportementale. Activez la protection contre la désactivation des outils de sécurité. Conservez des journaux immuables (WORM - Write Once Read Many). Effectuez des analyses de mémoire régulières.",
         techs: [
-          {name:'T1562 — Altération des défenses', dot:'#f59e0b', desc:'Désactivation d\'antivirus, pare-feu, outils EDR.'},
-          {name:'T1027 — Fichiers ou informations obscurcis', dot:'#00a8e8', desc:'Compression, chiffrement, stéganographie.'},
-          {name:'T1070 — Suppression d\'indicateurs', dot:'#6366f1', desc:'Effacement des journaux et traces.'},
+          {name:'T1562 — Altération des défenses', dot:'#f59e0b', desc:'Désactivation d\'antivirus, pare-feu, outils EDR et autres mécanismes de sécurité.'},
+          {name:'T1027 — Fichiers obscurcis', dot:'#00a8e8', desc:'Compression, chiffrement, stéganographie, et encodage pour cacher le contenu malveillant.'},
+          {name:'T1070 — Suppression d\'indicateurs', dot:'#6366f1', desc:'Effacement des journaux d\'événements, des traces et des artefacts d\'intrusion.'},
         ]
       },
       credential: {
         id: 'TA0006', title: 'Accès aux crédentiels',
-        desc: "Le vol de mots de passe, tokens, certificats et clés. Les attaquants utilisent le dumping mémoire (LSASS), le brute-force, le keylogging, et la recherche dans des magasins de mots de passe.",
-        defense: "Utilisez l'authentification multifacteur, protégez LSASS (Credential Guard), et surveillez les accès anormaux aux magasins de mots de passe.",
+        desc: "Le vol de mots de passe, tokens, certificats et clés. Les attaquants utilisent le dumping de la mémoire LSASS (avec des outils comme Mimikatz), le brute-force, le keylogging, et la recherche dans des magasins de mots de passe des navigateurs et gestionnaires de mots de passe.",
+        defense: "Utilisez systématiquement l'authentification multifacteur (MFA). Protégez LSASS avec Windows Credential Guard. Surveillez les accès anormaux aux magasins de mots de passe. Limitez les privilèges administratifs et utilisez des comptes de service dédiés.",
         techs: [
-          {name:'T1003 — Dumping des crédentiels OS', dot:'#f59e0b', desc:'Extraction depuis la mémoire (LSASS, NTDS, LSA).'},
-          {name:'T1110 — Force brute', dot:'#00a8e8', desc:'Essai répété de combinaisons de mots de passe.'},
-          {name:'T1555 — Crédentiels dans des magasins', dot:'#6366f1', desc:'Extraction depuis navigateurs, clés, gestionnaires.'},
+          {name:'T1003 — Dumping des crédentiels OS', dot:'#f59e0b', desc:'Extraction de mots de passe depuis la mémoire (LSASS, NTDS, LSA Secrets, fichiers SAM).'},
+          {name:'T1110 — Force brute', dot:'#00a8e8', desc:'Essai répété et automatisé de combinaisons de mots de passe sur des services exposés.'},
+          {name:'T1555 — Crédentiels dans des magasins', dot:'#6366f1', desc:'Extraction depuis navigateurs web, gestionnaires de mots de passe et clés de registre.'},
         ]
       },
       discovery: {
         id: 'TA0007', title: 'Découverte',
-        desc: "L'attaquant explore l'environnement : systèmes, comptes, services, partages, configurations réseau. Cette phase permet de planifier le mouvement latéral et la collecte ciblée.",
-        defense: "Limitez la visibilité inter-systèmes, surveillez les requêtes d'énumération (WMI, PowerShell, services), et segmentez votre réseau.",
+        desc: "L'attaquant explore l'environnement pour comprendre la structure du réseau, identifier des cibles de valeur et planifier le mouvement latéral et la collecte. Cela inclut la découverte de systèmes distants, de comptes utilisateurs, de services réseau, et de configurations réseau.",
+        defense: "Limitez la visibilité inter-systèmes avec une segmentation réseau stricte. Surveillez les requêtes d'énumération (WMI, PowerShell, services). Utilisez des comptes de service avec des privilèges minimaux et surveillez les connexions administratives.",
         techs: [
-          {name:'T1083 — Découverte de fichiers et répertoires', dot:'#f59e0b', desc:'Recherche de données sensibles.'},
-          {name:'T1018 — Découverte de systèmes distants', dot:'#00a8e8', desc:'Identification des machines accessibles.'},
-          {name:'T1046 — Découverte de services réseau', dot:'#6366f1', desc:'Scan des ports et services ouverts.'},
+          {name:'T1083 — Découverte de fichiers et répertoires', dot:'#f59e0b', desc:'Recherche de données sensibles dans le système de fichiers et les partages réseau.'},
+          {name:'T1018 — Découverte de systèmes distants', dot:'#00a8e8', desc:'Identification des machines accessibles dans le réseau via des scans et des requêtes.'},
+          {name:'T1046 — Découverte de services réseau', dot:'#6366f1', desc:'Scan des ports et services ouverts sur d\'autres systèmes du réseau.'},
         ]
       },
       lateral: {
         id: 'TA0008', title: 'Mouvement latéral',
-        desc: "Déplacement de système en système au sein du réseau. Les attaquants exploitent des services distants (RDP, SMB, SSH), passent le hash, ou utilisent des outils d'administration légitimes pour se déplacer discrètement.",
-        defense: "Segmentez le réseau, limitez le RDP et les services administratifs, surveillez les connexions inter-systèmes inhabituelles, et utilisez le jump host.",
+        desc: "Déplacement de système en système au sein du réseau. Les attaquants exploitent des services distants légitimes (RDP, SMB, SSH, VNC), passent le hash (Pass the Hash) ou utilisent des tickets Kerberos volés pour se déplacer discrètement sans avoir besoin de mots de passe supplémentaires.",
+        defense: "Segmentez votre réseau avec des zones de confiance. Limitez le RDP et les services administratifs aux seules machines nécessaires. Surveillez les connexions inter-systèmes inhabituelles et utilisez des jump hosts (bastions) sécurisés pour l'administration.",
         techs: [
-          {name:'T1021 — Services distants', dot:'#f59e0b', desc:'Utilisation de RDP, SMB, SSH, VNC.'},
-          {name:'T1550 — Utilisation de matériel alternatif', dot:'#00a8e8', desc:'Utilisation d\'identifiants alternatifs (hash, ticket).'},
-          {name:'T1133 — Services externes distants', dot:'#6366f1', desc:'Connexion via des services exposés.'},
+          {name:'T1021 — Services distants', dot:'#f59e0b', desc:'Utilisation de RDP, SMB/Windows Admin Shares, SSH, VNC, WinRM.'},
+          {name:'T1550 — Matériel alternatif', dot:'#00a8e8', desc:'Pass the Hash, Pass the Ticket, et utilisation d\'autres identifiants alternatifs.'},
+          {name:'T1133 — Services externes distants', dot:'#6366f1', desc:'Connexion via des services administratifs exposés (RDP sur Internet, VPN compromis).'},
         ]
       },
       collection: {
         id: 'TA0009', title: 'Collecte',
-        desc: "Rassemblement des données ciblées : fichiers sensibles, emails, enregistrements audio, captures d'écran. Cette phase prépare l'exfiltration et peut se dérouler sur plusieurs semaines.",
-        defense: "Classifiez vos données sensibles, surveillez les accès massifs aux fichiers, et utilisez le chiffrement au repos et en transit.",
+        desc: "Rassemblement des données ciblées par l'attaquant. Cela peut inclure la copie de fichiers sensibles, la capture d'écran de l'activité utilisateur, l'enregistrement audio, la collecte d'emails, et l'extraction de données depuis des bases de données et des dépôts d'informations (SharePoint, Confluence).",
+        defense: "Classifiez vos données sensibles et appliquez des contrôles d'accès stricts. Surveillez les accès massifs aux fichiers et aux bases de données. Utilisez le chiffrement au repos et en transit. Mettez en place des alertes sur les opérations de copie et d'extraction inhabituelles.",
         techs: [
-          {name:'T1005 — Données du système local', dot:'#f59e0b', desc:'Collecte de fichiers depuis le système compromis.'},
-          {name:'T1113 — Capture d\'écran', dot:'#00a8e8', desc:'Enregistrement visuel de l\'activité.'},
-          {name:'T1123 — Capture audio', dot:'#6366f1', desc:'Enregistrement du microphone pour capter des informations.'},
+          {name:'T1005 — Données du système local', dot:'#f59e0b', desc:'Collecte de fichiers sensibles directement sur le système compromis.'},
+          {name:'T1113 — Capture d\'écran', dot:'#00a8e8', desc:'Enregistrement visuel de l\'activité de l\'utilisateur pour capter des informations sensibles.'},
+          {name:'T1123 — Capture audio', dot:'#6366f1', desc:'Enregistrement du microphone pour capter des conversations et des informations orales.'},
         ]
       },
       c2: {
         id: 'TA0011', title: 'Commandement et contrôle (C2)',
-        desc: "Le canal par lequel l'attaquant contrôle le système compromis à distance. Les protocoles applicatifs (HTTP, HTTPS, DNS) sont souvent utilisés pour masquer le trafic dans le bruit légitime du réseau.",
-        defense: "Surveillez le trafic réseau vers des domaines inconnus, utilisez le DNS filtering, et analysez les patterns anormaux de volume et de timing.",
+        desc: "Le canal par lequel l'attaquant contrôle le système compromis à distance et reçoit des données exfiltrées. Les protocoles applicatifs (HTTP, HTTPS, DNS) sont souvent utilisés pour masquer le trafic dans le bruit légitime du réseau. Les attaquants utilisent aussi des tunnels chiffrés, des protocoles alternatifs, et des services cloud légitimes.",
+        defense: "Surveillez le trafic réseau vers des domaines inconnus ou récemment enregistrés. Utilisez le DNS filtering et le proxy avec inspection SSL. Analysez les patterns anormaux de volume, de fréquence et de timing du trafic sortant. Détectez les domaines générés automatiquement (DGA).",
         techs: [
-          {name:'T1071 — Protocole applicatif', dot:'#f59e0b', desc:'Utilisation de HTTP, HTTPS, WebSocket.'},
-          {name:'T1090 — Canal chiffré', dot:'#00a8e8', desc:'Canal sécurisé ou tunnel (SSH, VPN, Tor).'},
-          {name:'T1572 — Protocole standard', dot:'#6366f1', desc:'Masquage dans le trafic normal (DNS, ICMP).'},
+          {name:'T1071 — Protocole applicatif', dot:'#f59e0b', desc:'Communication via HTTP, HTTPS, WebSocket, et autres protocoles applicatifs.'},
+          {name:'T1090 — Canal chiffré ou tunnel', dot:'#00a8e8', desc:'Utilisation de tunnels SSH, VPN, Tor, ou d\'autres canaux chiffrés pour masquer le trafic.'},
+          {name:'T1572 — Protocole standard', dot:'#6366f1', desc:'Masquage dans le trafic réseau légitime (DNS tunneling, ICMP).'},
         ]
       },
       exfil: {
         id: 'TA0010', title: 'Exfiltration',
-        desc: "Le transfert des données volées hors de l'environnement. Les attaquants utilisent le web, le canal C2, ou même des supports physiques. L'exfiltration peut être progressive pour éviter la détection.",
-        defense: "Surveillez les transferts de données anormaux, utilisez des solutions DLP, et appliquez des quotas de bande passante sur les services critiques.",
+        desc: "Le transfert des données volées hors de l'environnement cible vers des systèmes contrôlés par l'attaquant. L'exfiltration peut être progressive (petites quantités sur de longues périodes) pour éviter la détection. Les attaquants utilisent le canal C2 existant, des services cloud légitimes, ou même des protocoles alternatifs comme le Bluetooth.",
+        defense: "Déployez des solutions DLP (Data Loss Prevention) pour surveiller et bloquer les transferts de données sensibles. Surveillez les transferts de données anormaux (volume, destination, heure). Appliquez des quotas de bande passante et inspectez le trafic sortant avec un proxy.",
         techs: [
-          {name:'T1041 — Exfiltration sur canal C2', dot:'#f59e0b', desc:'Envoi des données via le même canal de contrôle.'},
-          {name:'T1567 — Exfiltration sur service web', dot:'#00a8e8', desc:'Utilisation de services cloud légitimes (Dropbox, Drive).'},
-          {name:'T1048 — Exfiltration sur autre réseau', dot:'#6366f1', desc:'Utilisation de protocoles alternatifs (Bluetooth, WiFi).'},
+          {name:'T1041 — Exfiltration sur canal C2', dot:'#f59e0b', desc:'Envoi des données via le même canal de commande et contrôle déjà établi.'},
+          {name:'T1567 — Exfiltration sur service web', dot:'#00a8e8', desc:'Utilisation de services cloud légitimes (Dropbox, Google Drive, OneDrive) pour exfiltrer.'},
+          {name:'T1048 — Exfiltration sur autre réseau', dot:'#6366f1', desc:'Utilisation de protocoles alternatifs (Bluetooth, WiFi, USB) pour contourner la surveillance.'},
         ]
       },
       impact: {
         id: 'TA0040', title: 'Impact',
-        desc: "L'objectif final : perturbation, destruction ou manipulation des systèmes et données. Le ransomware (chiffrement) est un exemple classique, mais l'impact peut aussi être la suppression massive ou l'arrêt de services critiques.",
-        defense: "Maintenez des sauvegardes hors ligne et testées, surveillez les opérations de suppression massives, et isolez rapidement les systèmes compromis.",
+        desc: "L'objectif final de l'attaque : perturber, détruire ou manipuler les systèmes et données de l'organisation. Le ransomware (chiffrement des données pour extorsion) est l'exemple le plus visible, mais l'impact peut aussi être la suppression massive de données, l'arrêt de services critiques, la corruption de données, ou le redémarrage forcé des systèmes.",
+        defense: "Maintenez des sauvegardes hors ligne, immuables et régulièrement testées (3-2-1 : 3 copies, 2 supports, 1 hors site). Surveillez les opérations de suppression ou de chiffrement massives. Isolez rapidement les systèmes compromis et disposez d'un plan de reprise d'activité testé.",
         techs: [
-          {name:'T1486 — Données chiffrées pour impact', dot:'#f59e0b', desc:'Ransomware : chiffrement des données pour extorsion.'},
-          {name:'T1489 — Arrêt de service', dot:'#00a8e8', desc:'Interruption des opérations critiques.'},
-          {name:'T1529 — Arrêt du système', dot:'#6366f1', desc:'Extinction ou redémarrage forcé.'},
+          {name:'T1486 — Données chiffrées pour impact', dot:'#f59e0b', desc:'Ransomware : chiffrement des données de la victime pour demander une rançon.'},
+          {name:'T1489 — Arrêt de service', dot:'#00a8e8', desc:'Interruption des opérations critiques (bases de données, applications, services réseau).'},
+          {name:'T1529 — Arrêt du système', dot:'#6366f1', desc:'Extinction ou redémarrage forcé des systèmes pour perturber les opérations.'},
         ]
       }
     };
@@ -556,7 +633,7 @@
       const container = document.getElementById('detail-techs');
       container.innerHTML = item.techs.map(t => `
         <div class="tech-card">
-          <h4><span class="dot" style="background:${t.dot}"></span> ${t.name}</h4>
+          <h4><span class="dot" style="background:${t.dot}; color:${t.dot}"></span> ${t.name}</h4>
           <p>${t.desc}</p>
         </div>
       `).join('');
